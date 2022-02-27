@@ -1,0 +1,12 @@
+filetype plugin indent on
+set tabstop=2
+set shiftwidth=2
+set expandtab
+set nu
+set encoding=utf-8
+set gdefault
+set magic
+set hlsearch
+set incsearch
+set ignorecase smartcase
+setlocal listchars=eol:c
