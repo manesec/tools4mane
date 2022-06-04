@@ -1,3 +1,4 @@
+rem test for XP, WIN7
 rem from https://www.cnblogs.com/lxy2015/p/4646714.html
 
 echo Windows Registry Editor Version 5.00>3389.reg
