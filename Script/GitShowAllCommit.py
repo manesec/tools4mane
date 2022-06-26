@@ -10,7 +10,7 @@ import subprocess
 ▐    ▐            ▐         ▐                 ▐        ▐        
                     Show all commit on git
                            Version: 20220511
-                https://github.com/manesec/tools4me
+                https://github.com/manesec/tools4mane
 ---------------------------------------------------------------
 """
 

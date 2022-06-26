@@ -1,4 +1,4 @@
-# https://github.com/manesec/tools4me
+# https://github.com/manesec/tools4mane
 # write by Mane.
 
 import argparse
@@ -15,7 +15,7 @@ print("""
 ▐    ▐            ▐         ▐                 ▐        ▐        
           List email from pop3 server - Tools4me by Mane.
                         Version: 20220228
-                https://github.com/manesec/tools4me
+                https://github.com/manesec/tools4mane
 ---------------------------------------------------------------""")
 
 if __name__ == '__main__':

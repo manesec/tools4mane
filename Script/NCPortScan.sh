@@ -1,5 +1,5 @@
 #!/bin/bash
-# https://github.com/manesec/tools4me
+# https://github.com/manesec/tools4mane
 # write by Mane.
 
 echo " ▄▀▀▄ ▄▀▄  ▄▀▀█▄   ▄▀▀▄ ▀▄  ▄▀▀█▄▄▄▄  ▄▀▀▀▀▄  ▄▀▀█▄▄▄▄  ▄▀▄▄▄▄  
@@ -11,7 +11,7 @@ echo " ▄▀▀▄ ▄▀▄  ▄▀▀█▄   ▄▀▀▄ ▀▄  ▄▀▀�
 ▐    ▐            ▐         ▐                 ▐        ▐        
                   Using nc to scan all the port.
                         Version: 20220224
-                https://github.com/manesec/tools4me
+                https://github.com/manesec/tools4mane
 --------------------------------------------------------------"
 
 command -v nc >/dev/null
