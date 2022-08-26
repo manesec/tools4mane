@@ -1,4 +1,4 @@
-# https://github.com/manesec/tools4me
+# https://github.com/manesec/tools4mane
 # write by Mane.
 
 from http.server import BaseHTTPRequestHandler, HTTPServer
@@ -14,10 +14,10 @@ print("""
 ▐    ▐            ▐         ▐                 ▐        ▐        
                 Fake Redirect - Tools4me by Mane.
                         Version: 20220201
-                https://github.com/manesec/tools4me
+                https://github.com/manesec/tools4mane
 ---------------------------------------------------------------""")
 
-redirect_fake_url = "https://github.com/manesec/tools4me/"
+redirect_fake_url = "https://github.com/manesec/tools4mane/"
 class HttpHandler(BaseHTTPRequestHandler):
     global redirect_fake_url
     def _set_response(self):

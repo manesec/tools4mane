@@ -1,4 +1,4 @@
-# https://github.com/manesec/tools4me
+# https://github.com/manesec/tools4mane
 # write by Mane.
 
 import base64
@@ -18,7 +18,7 @@ print("""
 ▐    ▐            ▐         ▐                 ▐        ▐        
         Guess PID From Base64 Urls - Tools4me by Mane.
                            Version: 0.1
-                https://github.com/manesec/tools4me
+                https://github.com/manesec/tools4mane
 ---------------------------------------------------------------""")
 
 parser = argparse.ArgumentParser(description='Using for guess process in linux when have injection from web. For return data is base64.',\
