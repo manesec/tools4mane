@@ -1,5 +1,5 @@
 # https://github.com/manesec/tools4mane
-# write by Mane.
+# write by @manesec.
 
 import base64
 import re
@@ -16,7 +16,7 @@ print("""
 ▄▀   ▄▀   █   ▄▀  ▄▀   █    ▄▀▄▄▄▄    █▀▀▀    ▄▀▄▄▄▄    ▄▀▄▄▄▄▀ 
 █    █    ▐   ▐   █    ▐    █    ▐    ▐       █    ▐   █     ▐  
 ▐    ▐            ▐         ▐                 ▐        ▐        
-        Guess PID From Base64 Urls - Tools4me by Mane.
+        Guess PID From Base64 Urls - Tools4me by @manesec.
                            Version: 0.1
                 https://github.com/manesec/tools4mane
 ---------------------------------------------------------------""")

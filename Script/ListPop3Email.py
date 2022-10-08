@@ -1,5 +1,5 @@
 # https://github.com/manesec/tools4mane
-# write by Mane.
+# write by @manesec.
 
 import argparse
 import poplib
@@ -13,7 +13,7 @@ print("""
 ▄▀   ▄▀   █   ▄▀  ▄▀   █    ▄▀▄▄▄▄    █▀▀▀    ▄▀▄▄▄▄    ▄▀▄▄▄▄▀ 
 █    █    ▐   ▐   █    ▐    █    ▐    ▐       █    ▐   █     ▐  
 ▐    ▐            ▐         ▐                 ▐        ▐        
-          List email from pop3 server - Tools4me by Mane.
+          List email from pop3 server - Tools4me by @manesec.
                         Version: 20220228
                 https://github.com/manesec/tools4mane
 ---------------------------------------------------------------""")

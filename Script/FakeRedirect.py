@@ -1,5 +1,5 @@
 # https://github.com/manesec/tools4mane
-# write by Mane.
+# write by @manesec.
 
 from http.server import BaseHTTPRequestHandler, HTTPServer
 import argparse
@@ -12,7 +12,7 @@ print("""
 ▄▀   ▄▀   █   ▄▀  ▄▀   █    ▄▀▄▄▄▄    █▀▀▀    ▄▀▄▄▄▄    ▄▀▄▄▄▄▀ 
 █    █    ▐   ▐   █    ▐    █    ▐    ▐       █    ▐   █     ▐  
 ▐    ▐            ▐         ▐                 ▐        ▐        
-                Fake Redirect - Tools4me by Mane.
+                Fake Redirect - Tools4me by @manesec.
                         Version: 20220201
                 https://github.com/manesec/tools4mane
 ---------------------------------------------------------------""")

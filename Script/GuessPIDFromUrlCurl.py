@@ -1,5 +1,5 @@
 # https://github.com/manesec/tools4mane
-# write by Mane.
+# write by @manesec.
 
 from operator import ge
 import re
@@ -17,7 +17,7 @@ print("""
 ▄▀   ▄▀   █   ▄▀  ▄▀   █    ▄▀▄▄▄▄    █▀▀▀    ▄▀▄▄▄▄    ▄▀▄▄▄▄▀ 
 █    █    ▐   ▐   █    ▐    █    ▐    ▐       █    ▐   █     ▐  
 ▐    ▐            ▐         ▐                 ▐        ▐        
-            Guess PID From Url With Curl - Tools4me by Mane.
+            Guess PID From Url With Curl - Tools4me by @manesec.
                            Version: 0.1
                 https://github.com/manesec/tools4mane
 ---------------------------------------------------------------""")

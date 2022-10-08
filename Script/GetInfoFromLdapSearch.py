@@ -1,5 +1,5 @@
 # https://github.com/manesec/tools4mane
-# write by Mane.
+# write by @manesec.
 
 import subprocess
 import argparse
@@ -13,7 +13,7 @@ print("""
 ▄▀   ▄▀   █   ▄▀  ▄▀   █    ▄▀▄▄▄▄    █▀▀▀    ▄▀▄▄▄▄    ▄▀▄▄▄▄▀ 
 █    █    ▐   ▐   █    ▐    █    ▐    ▐       █    ▐   █     ▐  
 ▐    ▐            ▐         ▐                 ▐        ▐        
-        Enum infomation from ldap search - Tools4me by Mane.
+        Enum infomation from ldap search - Tools4me by @manesec.
                         Version: 20220626
                 https://github.com/manesec/tools4mane
 ---------------------------------------------------------------""")

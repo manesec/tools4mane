@@ -1,5 +1,5 @@
 # https://github.com/manesec/tools4mane
-# write by Mane.
+# write by @manesec.
 
 import re
 import argparse
@@ -15,7 +15,7 @@ print("""
 ▄▀   ▄▀   █   ▄▀  ▄▀   █    ▄▀▄▄▄▄    █▀▀▀    ▄▀▄▄▄▄    ▄▀▄▄▄▄▀ 
 █    █    ▐   ▐   █    ▐    █    ▐    ▐       █    ▐   █     ▐  
 ▐    ▐            ▐         ▐                 ▐        ▐        
-              Guess PID From Urls - Tools4me by Mane.
+              Guess PID From Urls - Tools4me by @manesec.
                            Version: 0.1
                 https://github.com/manesec/tools4mane
 ---------------------------------------------------------------""")
