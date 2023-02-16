@@ -1,3 +1,6 @@
+-- PDE of manesec modified version :P
+-- Github: Tools4mane https://github.com/manesec/tools4mane
+
 -- Install packer
 local install_path = vim.fn.stdpath 'data' .. '/site/pack/packer/start/packer.nvim'
 local is_bootstrap = false
@@ -48,7 +51,17 @@ require('packer').startup(function(use)
   use 'tpope/vim-rhubarb'
   use 'lewis6991/gitsigns.nvim'
 
+  -- Theme 0
   use 'navarasu/onedark.nvim' -- Theme inspired by Atom
+
+
+  -- Theme 1, dark light
+  -- use {
+  --     'uloco/bluloco.nvim',
+  --     requires = { 'rktjmp/lush.nvim' }
+  -- }
+  -- End theme 1
+
   use 'nvim-lualine/lualine.nvim' -- Fancier statusline
   use 'lukas-reineke/indent-blankline.nvim' -- Add indentation guides even on blank lines
   use 'numToStr/Comment.nvim' -- "gc" to comment visual regions/lines
@@ -68,6 +81,21 @@ require('packer').startup(function(use)
       },
     tag = 'nightly' -- optional, updated every week. (see issue #1193)
   }
+
+  use {  -- Auto pair
+    "windwp/nvim-autopairs",
+      config = function() require("nvim-autopairs").setup {} end
+  }
+
+  use 'mfussenegger/nvim-dap' -- Add debug support
+  use { "rcarriga/nvim-dap-ui", requires = {"mfussenegger/nvim-dap"} }
+
+  -- Theme 1
+  -- use {vim
+  --     'uloco/bluloco.nvim',
+  --     requires = { 'rktjmp/lush.nvim' }
+  -- }
+
 
   -- Add custom plugins to packer from ~/.config/nvim/lua/custom/plugins.lua
   local has_plugins, plugins = pcall(require, 'custom.plugins')
@@ -127,9 +155,10 @@ vim.o.smartcase = true
 vim.o.updatetime = 250
 vim.wo.signcolumn = 'yes'
 
--- Set colorscheme
+-- Set colorscheme / theme
 vim.o.termguicolors = true
 vim.cmd [[colorscheme onedark]]
+-- vim.cmd [[colorscheme bluloco-dark]]
 
 -- Set completeopt to have a better completion experience
 vim.o.completeopt = 'menuone,noselect'
@@ -157,8 +186,88 @@ vim.g.loaded_netrwPlugin = 1
 -- set termguicolors to enable highlight groups
 vim.opt.termguicolors = true
 
+
+-- DAP Config
+-- sudo pip3 install debugpy
+local dap,dapui = require('dap'), require('dapui')
+dapui.setup()
+dap.set_log_level('TRACE')
+dap.adapters.python = {
+  type = 'executable';
+  command = '/usr/bin/python';
+  args = { '-m', 'debugpy.adapter' };
+}
+dap.configurations.python = {
+  {
+    type = 'python';
+    request = 'launch';
+    name = "Launch file";
+    program = "${file}";
+    pythonPath = function()
+      return '/usr/bin/python'
+    end;
+  },
+}
+dap.listeners.after.event_initialized["dapui_config"] = function()
+  dapui.open()
+end
+dap.listeners.before.event_terminated["dapui_config"] = function()
+  dapui.close()
+end
+dap.listeners.before.event_exited["dapui_config"] = function()
+  dapui.close()
+end
+
+vim.keymap.set('n', '<F5>', function()
+  vim.api.nvim_command('write')
+  require('dap').continue()
+end)
+vim.keymap.set('n', '<F6>', function() require('dap').step_over() end)
+vim.keymap.set('n', '<F7>', function() require('dap').step_into() end)
+vim.keymap.set('n', '<F8>', function() require('dap').step_out() end)
+vim.keymap.set('n', '<Leader>b', function() require('dap').toggle_breakpoint() end)
+vim.keymap.set('n', '<Leader>B', function() require('dap').set_breakpoint() end)
+vim.keymap.set('n', '<Leader>lp', function() require('dap').set_breakpoint(nil, nil, vim.fn.input('Log point message: ')) end)
+vim.keymap.set('n', '<Leader>dr', function() require('dap').repl.open() end)
+vim.keymap.set('n', '<Leader>dl', function() require('dap').run_last() end)
+vim.keymap.set({'n', 'v'}, '<Leader>dh', function()
+  require('dap.ui.widgets').hover()
+end)
+vim.keymap.set({'n', 'v'}, '<Leader>dp', function()
+  require('dap.ui.widgets').preview()
+end)
+vim.keymap.set('n', '<Leader>df', function()
+  local widgets = require('dap.ui.widgets')
+  widgets.centered_float(widgets.frames)
+end)
+vim.keymap.set('n', '<Leader>ds', function()
+  local widgets = require('dap.ui.widgets')
+  widgets.centered_float(widgets.scopes)
+end)
+
+
+-- UI
+require("neodev").setup({
+  library = { plugins = { "nvim-dap-ui" }, types = true }
+
+})
+
+
 -- empty setup using defaults
 require("nvim-tree").setup({
+      view = {
+        mappings = {
+          list = {
+            { key = "u", action = "dir_up" },
+            { key = "<C-e>",
+              action = "mane",
+              action_cb = function()
+                require("nvim-tree").toggle()
+              end,
+            }
+          },
+        },
+      },
       renderer = {
         add_trailing = false,
         group_empty = false,
@@ -224,18 +333,15 @@ require("nvim-tree").setup({
 })
 
 
-
-
-
-
-
-
-
-
-
-
-
-
+-- Theme 1 Config
+-- require("bluloco").setup({
+--   style = "auto",               -- "auto" | "dark" | "light"
+--   transparent = false,
+--   italics = false,
+--   terminal = vim.fn.has("gui_running") == 1, -- bluoco colors are enabled in gui terminals per default.
+--   guicursor   = true,
+-- })
+-- End 
 
 
 -- [[ Highlight on yank ]]
@@ -300,7 +406,8 @@ pcall(require('telescope').load_extension, 'fzf')
 
 -- See `:help telescope.builtin`
 vim.keymap.set('n', '<leader>?', require('telescope.builtin').oldfiles, { desc = '[?] Find recently opened files' })
-vim.keymap.set('n', '<leader><space>', require('telescope.builtin').buffers, { desc = '[ ] Find existing buffers' })
+vim.keymap.set('n', '<leader>sb', require('telescope.builtin').buffers, { desc = '[S]earch existing [B]uffers' })
+vim.keymap.set('n', '<leader><space>', require('telescope.builtin').commands, { desc = '[S]earch command' })
 vim.keymap.set('n', '<leader>/', function()
   -- You can pass additional configuration to telescope to change theme, layout, etc.
   require('telescope.builtin').current_buffer_fuzzy_find(require('telescope.themes').get_dropdown {
@@ -314,6 +421,7 @@ vim.keymap.set('n', '<leader>sh', require('telescope.builtin').help_tags, { desc
 vim.keymap.set('n', '<leader>sw', require('telescope.builtin').grep_string, { desc = '[S]earch current [W]ord' })
 vim.keymap.set('n', '<leader>sg', require('telescope.builtin').live_grep, { desc = '[S]earch by [G]rep' })
 vim.keymap.set('n', '<leader>sd', require('telescope.builtin').diagnostics, { desc = '[S]earch [D]iagnostics' })
+vim.keymap.set('n', '<C-e>', require('nvim-tree.api').tree.toggle, { desc = 'Toggle Nvim Tree' })
 
 -- [[ Configure Treesitter ]]
 -- See `:help nvim-treesitter`
@@ -422,6 +530,7 @@ local on_attach = function(_, bufnr)
   nmap('<leader>wl', function()
     print(vim.inspect(vim.lsp.buf.list_workspace_folders()))
   end, '[W]orkspace [L]ist Folders')
+
 
   -- Create a command `:Format` local to the LSP buffer
   vim.api.nvim_buf_create_user_command(bufnr, 'Format', function(_)
