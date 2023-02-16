@@ -74,6 +74,8 @@ require('packer').startup(function(use)
   use { 'nvim-telescope/telescope-fzf-native.nvim', run = 'make', cond = vim.fn.executable 'make' == 1 }
 
   -- Manesec add
+  use { 'CRAG666/code_runner.nvim', requires = 'nvim-lua/plenary.nvim' }
+
   use {    -- Add tree
     'nvim-tree/nvim-tree.lua',
       requires = {
@@ -186,6 +188,16 @@ vim.g.loaded_netrwPlugin = 1
 -- set termguicolors to enable highlight groups
 vim.opt.termguicolors = true
 
+-- set code runner
+require('code_runner').setup({
+  -- put here the commands by filetype
+  filetype = {
+		java = "cd $dir && javac $fileName && java $fileNameWithoutExt",
+		python = "python3 -u",
+		typescript = "deno run",
+		rust = "cd $dir && rustc $fileName && $dir/$fileNameWithoutExt"
+	},
+})
 
 -- DAP Config
 -- sudo pip3 install debugpy
