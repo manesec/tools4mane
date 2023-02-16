@@ -74,7 +74,7 @@ require('packer').startup(function(use)
   use { 'nvim-telescope/telescope-fzf-native.nvim', run = 'make', cond = vim.fn.executable 'make' == 1 }
 
   -- Manesec add
-  use { 'CRAG666/code_runner.nvim', requires = 'nvim-lua/plenary.nvim' }
+  use { 'CRAG666/code_runner.nvim', requires = 'nvim-lua/plenary.nvim' } -- Code Runner
 
   use {    -- Add tree
     'nvim-tree/nvim-tree.lua',
@@ -90,7 +90,36 @@ require('packer').startup(function(use)
   }
 
   use 'mfussenegger/nvim-dap' -- Add debug support
-  use { "rcarriga/nvim-dap-ui", requires = {"mfussenegger/nvim-dap"} }
+  use { "rcarriga/nvim-dap-ui", requires = {"mfussenegger/nvim-dap"} } -- CUI of debug windows
+
+  use {'kevinhwang91/nvim-ufo', requires = 'kevinhwang91/promise-async'}
+
+  use { -- color code block
+    "folke/twilight.nvim",
+    config = function()
+      require("twilight").setup {
+        dimming = {
+          alpha = 0.25, -- amount of dimming
+          -- we try to get the foreground from the highlight groups or fallback color
+          color = { "Normal", "#ffffff" },
+          term_bg = "#000000", -- if guibg=NONE, this will be used to calculate text color
+          inactive = false, -- when true, other windows will be fully dimmed (unless they contain the same buffer)
+        },
+        context = 10, -- amount of lines we will try to show around the current line
+        treesitter = true, -- use treesitter when available for the filetype
+        -- treesitter is used to automatically expand the visible text,
+        -- but you can further control the types of nodes that should always be fully expanded
+        expand = { -- for treesitter, we we always try to expand to the top-most ancestor with these types
+          "function",
+          "method",
+          "table",
+          "if_statement",
+        },
+        exclude = {}, -- exclude these filetypes
+      }
+    end
+  }
+
 
   -- Theme 1
   -- use {vim
@@ -180,6 +209,29 @@ vim.keymap.set({ 'n', 'v' }, '<Space>', '<Nop>', { silent = true })
 vim.keymap.set('n', 'k', "v:count == 0 ? 'gk' : 'k'", { expr = true, silent = true })
 vim.keymap.set('n', 'j', "v:count == 0 ? 'gj' : 'j'", { expr = true, silent = true })
 
+-- UFO Config
+vim.o.foldcolumn = '0' -- '0' is not bad
+vim.o.foldlevel = 99 -- Using ufo provider need a large value, feel free to decrease the value
+vim.o.foldlevelstart = 99
+vim.o.foldenable = true
+
+-- Using ufo provider need remap `zR` and `zM`. If Neovim is 0.6.1, remap yourself
+vim.keymap.set('n', '<Leader>+', require('ufo').openAllFolds)
+vim.keymap.set('n', '<Leader>_', require('ufo').closeAllFolds)
+
+local capabilities = vim.lsp.protocol.make_client_capabilities()
+capabilities.textDocument.foldingRange = {
+    dynamicRegistration = false,
+    lineFoldingOnly = true
+}
+local language_servers = require("lspconfig").util.available_servers() -- or list servers manually like {'gopls', 'clangd'}
+for _, ls in ipairs(language_servers) do
+    require('lspconfig')[ls].setup({
+        capabilities = capabilities
+        -- you can add other fields for setting up lsp server in this table
+    })
+end
+require('ufo').setup()
 
 -- Manesec add
 vim.g.loaded_netrw = 1
@@ -202,7 +254,80 @@ require('code_runner').setup({
 -- DAP Config
 -- sudo pip3 install debugpy
 local dap,dapui = require('dap'), require('dapui')
-dapui.setup()
+
+dapui.setup(
+  {
+    controls = {
+      element = "repl",
+      enabled = false,
+      icons = {
+        disconnect = "X",
+        pause = "||",
+        play = ">",
+        run_last = "R",
+        step_back = " ",
+        step_into = "->",
+        step_out = "~>",
+        step_over = ">>",
+        terminate = "Q"
+      }
+    },
+    element_mappings = {},
+    expand_lines = true,
+    floating = {
+      border = "single",
+      mappings = {
+        close = { "q", "<Esc>" }
+      }
+    },
+    force_buffers = true,
+    icons = {
+      collapsed = "-",
+      current_frame = ">",
+      expanded = "+"
+    },
+    layouts = { {
+        elements = { {
+            id = "scopes",
+            size = 0.25
+          }, {
+            id = "breakpoints",
+            size = 0.25
+          }, {
+            id = "stacks",
+            size = 0.25
+          }, {
+            id = "watches",
+            size = 0.25
+          } },
+        position = "left",
+        size = 40
+      }, {
+        elements = { {
+            id = "repl",
+            size = 0.5
+          }, {
+            id = "console",
+            size = 0.5
+          } },
+        position = "bottom",
+        size = 10
+      } },
+    mappings = {
+      edit = "e",
+      expand = { "<CR>", "<2-LeftMouse>" },
+      open = "o",
+      remove = "d",
+      repl = "r",
+      toggle = "t"
+    },
+    render = {
+      indent = 1,
+      max_value_lines = 100
+    }
+  }
+)
+
 dap.set_log_level('TRACE')
 dap.adapters.python = {
   type = 'executable';
@@ -344,7 +469,6 @@ require("nvim-tree").setup({
       }
 })
 
-
 -- Theme 1 Config
 -- require("bluloco").setup({
 --   style = "auto",               -- "auto" | "dark" | "light"
@@ -354,7 +478,6 @@ require("nvim-tree").setup({
 --   guicursor   = true,
 -- })
 -- End 
-
 
 -- [[ Highlight on yank ]]
 -- See `:help vim.highlight.on_yank()`
