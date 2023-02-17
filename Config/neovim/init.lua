@@ -29,6 +29,12 @@ require('packer').startup(function(use)
     },
   }
 
+  -- COQ Nvim for python3
+  use { 'ms-jpq/coq_nvim', run = 'python3 -m coq deps' }
+  use 'ms-jpq/coq.artifacts'
+  use 'ms-jpq/coq.thirdparty'
+
+
   use { -- Autocompletion
     'hrsh7th/nvim-cmp',
     requires = { 'hrsh7th/cmp-nvim-lsp', 'L3MON4D3/LuaSnip', 'saadparwaiz1/cmp_luasnip' },
@@ -226,14 +232,15 @@ capabilities.textDocument.foldingRange = {
 }
 local language_servers = require("lspconfig").util.available_servers() -- or list servers manually like {'gopls', 'clangd'}
 for _, ls in ipairs(language_servers) do
-    require('lspconfig')[ls].setup({
+    require('coq')[ls].setup({
         capabilities = capabilities
         -- you can add other fields for setting up lsp server in this table
     })
 end
 require('ufo').setup()
 
--- Manesec add
+-- by manesec
+vim.g.coq_settings = { auto_start = 'shut-up' }
 vim.g.loaded_netrw = 1
 vim.g.loaded_netrwPlugin = 1
 
@@ -694,7 +701,6 @@ local servers = {
 }
 
 -- Setup neovim lua configuration
-require('neodev').setup()
 --
 -- nvim-cmp supports additional completion capabilities, so broadcast that to servers
 local capabilities = vim.lsp.protocol.make_client_capabilities()
@@ -765,6 +771,7 @@ cmp.setup {
     { name = 'luasnip' },
   },
 }
+
 
 -- The line beneath this is called `modeline`. See `:help modeline`
 -- vim: ts=2 sts=2 sw=2 et
