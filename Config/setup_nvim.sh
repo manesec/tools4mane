@@ -13,4 +13,4 @@ wget https://raw.githubusercontent.com/manesec/tools4mane/main/Config/neovim/ini
 
 echo [*] install python env ...
 sudo pip3 install debugpy
-sudo apt install -y python3-venv
+sudo apt install -y python3-venv npm
