@@ -1,6 +1,6 @@
 -- PDE of manesec modified version :P
--- Github: Tools4mane https://github.com/manesec/tools4mane
-
+-- Github: Tools4mane https://github.com/manesec/Tools4mane
+--
 -- Install packer
 local install_path = vim.fn.stdpath 'data' .. '/site/pack/packer/start/packer.nvim'
 local is_bootstrap = false
@@ -29,11 +29,20 @@ require('packer').startup(function(use)
     },
   }
 
+  -- Mane love Top Line config
+  use 'johann2357/nvim-smartbufs'
+  use {'ojroques/nvim-hardline'}
+
+  -- Undo history :UndotreeToggle
+  use 'mbbill/undotree'
+
+  -- glow for readmeeee :P
+  use {"ellisonleao/glow.nvim", config = function() require("glow").setup() end}
+
   -- COQ Nvim for python3
   use { 'ms-jpq/coq_nvim', run = 'python3 -m coq deps' }
   use 'ms-jpq/coq.artifacts'
   use 'ms-jpq/coq.thirdparty'
-
 
   use { -- Autocompletion
     'hrsh7th/nvim-cmp',
@@ -60,7 +69,6 @@ require('packer').startup(function(use)
   -- Theme 0
   use 'navarasu/onedark.nvim' -- Theme inspired by Atom
 
-
   -- Theme 1, dark light
   -- use {
   --     'uloco/bluloco.nvim',
@@ -79,7 +87,6 @@ require('packer').startup(function(use)
   -- Fuzzy Finder Algorithm which requires local dependencies to be built. Only load if `make` is available
   use { 'nvim-telescope/telescope-fzf-native.nvim', run = 'make', cond = vim.fn.executable 'make' == 1 }
 
-  -- Manesec add
   use { 'CRAG666/code_runner.nvim', requires = 'nvim-lua/plenary.nvim' } -- Code Runner
 
   use {    -- Add tree
@@ -126,13 +133,11 @@ require('packer').startup(function(use)
     end
   }
 
-
   -- Theme 1
   -- use {vim
   --     'uloco/bluloco.nvim',
   --     requires = { 'rktjmp/lush.nvim' }
   -- }
-
 
   -- Add custom plugins to packer from ~/.config/nvim/lua/custom/plugins.lua
   local has_plugins, plugins = pcall(require, 'custom.plugins')
@@ -166,7 +171,7 @@ vim.api.nvim_create_autocmd('BufWritePost', {
   pattern = vim.fn.expand '$MYVIMRC',
 })
 
--- [[ Setting options ]]
+-- [[ VIM Setting options ]]
 -- See `:help vim.o`
 
 -- Set highlight on search
@@ -221,9 +226,45 @@ vim.o.foldlevel = 99 -- Using ufo provider need a large value, feel free to decr
 vim.o.foldlevelstart = 99
 vim.o.foldenable = true
 
+-- Mane Love this key
+vim.keymap.set('n', '<Leader>w', function()
+  vim.api.nvim_command('write')
+end, { desc = 'Write to files' })
+
+vim.keymap.set('n', '<Leader>x', function()
+  vim.api.nvim_command('x')
+end, { desc = 'Write to files' })
+
+-- Top bar key binding ...
+vim.keymap.set('n', '<Leader>1', function()  require("nvim-smartbufs").goto_buffer(1) end )
+vim.keymap.set('n', '<Leader>2', function()  require("nvim-smartbufs").goto_buffer(2) end )
+vim.keymap.set('n', '<Leader>3', function()  require("nvim-smartbufs").goto_buffer(3) end )
+vim.keymap.set('n', '<Leader>4', function()  require("nvim-smartbufs").goto_buffer(4) end )
+vim.keymap.set('n', '<Leader>5', function()  require("nvim-smartbufs").goto_buffer(5) end )
+vim.keymap.set('n', '<Leader>6', function()  require("nvim-smartbufs").goto_buffer(6) end )
+vim.keymap.set('n', '<Leader>7', function()  require("nvim-smartbufs").goto_buffer(7) end )
+vim.keymap.set('n', '<Leader>8', function()  require("nvim-smartbufs").goto_buffer(8) end )
+vim.keymap.set('n', '<Leader>9', function()  require("nvim-smartbufs").goto_buffer(9) end )
+vim.keymap.set('n', '<Leader><Right>', function()  require("nvim-smartbufs").goto_next_buffer() end )
+vim.keymap.set('n', '<Leader><Left>', function()  require("nvim-smartbufs").goto_prev_buffer() end )
+vim.keymap.set('n', '<Leader>c1', function()  require("nvim-smartbufs").goto_terminal(1) end )
+vim.keymap.set('n', '<Leader>c2', function()  require("nvim-smartbufs").goto_terminal(2) end )
+vim.keymap.set('n', '<Leader>c3', function()  require("nvim-smartbufs").goto_terminal(3) end )
+vim.keymap.set('n', '<Leader>c4', function()  require("nvim-smartbufs").goto_terminal(4) end )
+vim.keymap.set('n', '<Leader>x', function()  require("nvim-smartbufs").close_current_buffer() end )
+vim.keymap.set('n', '<Leader>q1', function()  require("nvim-smartbufs").close_buffer(1) end )
+vim.keymap.set('n', '<Leader>q2', function()  require("nvim-smartbufs").close_buffer(2) end )
+vim.keymap.set('n', '<Leader>q3', function()  require("nvim-smartbufs").close_buffer(3) end )
+vim.keymap.set('n', '<Leader>q4', function()  require("nvim-smartbufs").close_buffer(4) end )
+vim.keymap.set('n', '<Leader>q5', function()  require("nvim-smartbufs").close_buffer(5) end )
+vim.keymap.set('n', '<Leader>q6', function()  require("nvim-smartbufs").close_buffer(6) end )
+vim.keymap.set('n', '<Leader>q7', function()  require("nvim-smartbufs").close_buffer(7) end )
+vim.keymap.set('n', '<Leader>q8', function()  require("nvim-smartbufs").close_buffer(8) end )
+vim.keymap.set('n', '<Leader>q9', function()  require("nvim-smartbufs").close_buffer(9) end )
+
 -- Using ufo provider need remap `zR` and `zM`. If Neovim is 0.6.1, remap yourself
-vim.keymap.set('n', '<Leader>+', require('ufo').openAllFolds)
-vim.keymap.set('n', '<Leader>_', require('ufo').closeAllFolds)
+vim.keymap.set('n', '<Leader>+', require('ufo').openAllFolds, { desc = 'openAllFolds' })
+vim.keymap.set('n', '<Leader>_', require('ufo').closeAllFolds, { desc = 'closeAllFolds' })
 
 local capabilities = vim.lsp.protocol.make_client_capabilities()
 capabilities.textDocument.foldingRange = {
@@ -237,9 +278,9 @@ for _, ls in ipairs(language_servers) do
         -- you can add other fields for setting up lsp server in this table
     })
 end
+
 require('ufo').setup()
 
--- by manesec
 vim.g.coq_settings = { auto_start = 'shut-up' }
 vim.g.loaded_netrw = 1
 vim.g.loaded_netrwPlugin = 1
@@ -365,11 +406,11 @@ end
 vim.keymap.set('n', '<F5>', function()
   vim.api.nvim_command('write')
   require('dap').continue()
-end)
-vim.keymap.set('n', '<F6>', function() require('dap').step_over() end)
-vim.keymap.set('n', '<F7>', function() require('dap').step_into() end)
-vim.keymap.set('n', '<F8>', function() require('dap').step_out() end)
-vim.keymap.set('n', '<Leader>b', function() require('dap').toggle_breakpoint() end)
+end, { desc = 'Debug Run Debug [F5]' })
+vim.keymap.set('n', '<F6>', function() require('dap').step_over() end, { desc = 'Debug step over [F6]' })
+vim.keymap.set('n', '<F7>', function() require('dap').step_into() end, { desc = 'Debug step into [F7]' })
+vim.keymap.set('n', '<F8>', function() require('dap').step_out() end, { desc = 'Debug step out [F8]' })
+vim.keymap.set('n', '<Leader>b', function() require('dap').toggle_breakpoint() end, { desc = 'Debug toggle_breakpoint [F5]' })
 vim.keymap.set('n', '<Leader>B', function() require('dap').set_breakpoint() end)
 vim.keymap.set('n', '<Leader>lp', function() require('dap').set_breakpoint(nil, nil, vim.fn.input('Log point message: ')) end)
 vim.keymap.set('n', '<Leader>dr', function() require('dap').repl.open() end)
@@ -390,12 +431,11 @@ vim.keymap.set('n', '<Leader>ds', function()
 end)
 
 
--- UI
+-- Debug UI
 require("neodev").setup({
   library = { plugins = { "nvim-dap-ui" }, types = true }
 
 })
-
 
 -- empty setup using defaults
 require("nvim-tree").setup({
@@ -725,6 +765,30 @@ mason_lspconfig.setup_handlers {
     }
   end,
 }
+
+-- Top bar 
+require('hardline').setup {
+  bufferline = true,  -- disable bufferline
+  bufferline_settings = {
+    exclude_terminal = true,  -- don't show terminal buffers in bufferline
+    show_index = true,        -- show buffer indexes (not the actual buffer numbers) in bufferline
+  },
+  theme = 'default',   -- change theme
+  sections = {         -- define sections
+    {class = 'mode', item = require('hardline.parts.mode').get_item},
+    {class = 'high', item = require('hardline.parts.git').get_item, hide = 100},
+    {class = 'med', item = require('hardline.parts.filename').get_item},
+    '%<',
+    {class = 'med', item = '%='},
+    {class = 'low', item = require('hardline.parts.wordcount').get_item, hide = 100},
+    {class = 'error', item = require('hardline.parts.lsp').get_error},
+    {class = 'warning', item = require('hardline.parts.lsp').get_warning},
+    {class = 'warning', item = require('hardline.parts.whitespace').get_item},
+    {class = 'high', item = require('hardline.parts.filetype').get_item, hide = 60},
+    {class = 'mode', item = require('hardline.parts.line').get_item},
+  },
+}
+
 
 -- Turn on lsp status information
 require('fidget').setup()
