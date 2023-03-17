@@ -29,9 +29,12 @@ require('packer').startup(function(use)
     },
   }
 
-  -- Mane love Top Line config
+  -- love Top Line config
   use 'johann2357/nvim-smartbufs'
   use {'ojroques/nvim-hardline'}
+
+  -- Auto command auto completion
+  use { 'gelguy/wilder.nvim' }
 
   -- Undo history :UndotreeToggle
   use 'mbbill/undotree'
@@ -278,6 +281,31 @@ for _, ls in ipairs(language_servers) do
         -- you can add other fields for setting up lsp server in this table
     })
 end
+
+
+-- Command Auto Completion
+local wilder = require('wilder')
+wilder.setup({
+  modes = {':', '/', '?'},
+  next_key = '<Down>',
+  previous_key  = '<Up>',
+  accept_key  = '<Tab>',
+  reject_key = '<S-Tab>',
+
+})
+wilder.set_option('renderer', wilder.popupmenu_renderer(
+  wilder.popupmenu_palette_theme({
+    -- 'single', 'double', 'rounded' or 'solid'
+    -- can also be a list of 8 characters, see :h wilder#popupmenu_palette_theme() for more details
+    border = 'rounded',
+    max_height = '75%',      -- max height of the palette
+    min_height = 0,          -- set to the same as 'max_height' for a fixed height window
+    prompt_position = 'top', -- 'top' or 'bottom' to set the location of the prompt
+    reverse = 0,             -- set to 1 to reverse the order of the list, use in combination with 'prompt_position'
+  })
+))
+
+
 
 require('ufo').setup()
 
@@ -788,6 +816,10 @@ require('hardline').setup {
     {class = 'mode', item = require('hardline.parts.line').get_item},
   },
 }
+
+
+
+
 
 
 -- Turn on lsp status information
