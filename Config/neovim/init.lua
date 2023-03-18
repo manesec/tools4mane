@@ -229,19 +229,19 @@ vim.keymap.set('n', 'k', "v:count == 0 ? 'gk' : 'k'", { expr = true, silent = tr
 vim.keymap.set('n', 'j', "v:count == 0 ? 'gj' : 'j'", { expr = true, silent = true })
 
 -- UFO Config
+require('ufo').setup()
 vim.o.foldcolumn = '0' -- '0' is not bad
 vim.o.foldlevel = 99 -- Using ufo provider need a large value, feel free to decrease the value
 vim.o.foldlevelstart = 99
 vim.o.foldenable = true
 
--- Mane Love this key
-vim.keymap.set('n', '<Leader>w', function()
-  vim.api.nvim_command('write')
-end, { desc = 'Write to files' })
-
-vim.keymap.set('n', '<Leader>x', function()
-  vim.api.nvim_command('x')
-end, { desc = 'Write to files' })
+-- Using ufo provider need remap `zR` and `zM`. If Neovim is 0.6.1, remap yourself
+vim.keymap.set('n', '+', require('ufo').openAllFolds, { desc = 'openAllFolds' })
+vim.keymap.set('n', '=', require('ufo').openFoldsExceptKinds, { desc = 'openAllFolds' })
+vim.keymap.set('n', '_', require('ufo').closeAllFolds, { desc = 'closeAllFolds' })
+vim.keymap.set('n', '-', function ()
+   require('ufo').closeFoldsWith(1)
+ end , { desc = 'closeAllFolds' })
 
 -- Top bar key binding ...
 vim.keymap.set('n', '<Leader>1', function()  require("nvim-smartbufs").goto_buffer(1) end )
@@ -259,8 +259,8 @@ vim.keymap.set('n', '<Leader>c1', function()  require("nvim-smartbufs").goto_ter
 vim.keymap.set('n', '<Leader>c2', function()  require("nvim-smartbufs").goto_terminal(2) end )
 vim.keymap.set('n', '<Leader>c3', function()  require("nvim-smartbufs").goto_terminal(3) end )
 vim.keymap.set('n', '<Leader>c4', function()  require("nvim-smartbufs").goto_terminal(4) end )
-vim.keymap.set('n', '<Leader>x', function()  require("nvim-smartbufs").close_current_buffer() end )
-vim.keymap.set('n', '<Leader>X', function()  vim.api.nvim_command('q!') end )
+vim.keymap.set('n', '<c-x>', function()  require("nvim-smartbufs").close_current_buffer() end )
+vim.keymap.set('n', '<c-q>', function()  vim.api.nvim_command('q!') end )
 vim.keymap.set('n', '<Leader>q1', function()  require("nvim-smartbufs").close_buffer(1) end )
 vim.keymap.set('n', '<Leader>q2', function()  require("nvim-smartbufs").close_buffer(2) end )
 vim.keymap.set('n', '<Leader>q3', function()  require("nvim-smartbufs").close_buffer(3) end )
@@ -272,9 +272,6 @@ vim.keymap.set('n', '<Leader>q8', function()  require("nvim-smartbufs").close_bu
 vim.keymap.set('n', '<Leader>q9', function()  require("nvim-smartbufs").close_buffer(9) end )
 vim.keymap.set('n', '<Leader>h', function() require("memento").toggle() end )
 
--- Using ufo provider need remap `zR` and `zM`. If Neovim is 0.6.1, remap yourself
-vim.keymap.set('n', '<Leader>+', require('ufo').openAllFolds, { desc = 'openAllFolds' })
-vim.keymap.set('n', '<Leader>_', require('ufo').closeAllFolds, { desc = 'closeAllFolds' })
 
 local capabilities = vim.lsp.protocol.make_client_capabilities()
 capabilities.textDocument.foldingRange = {
@@ -311,12 +308,11 @@ wilder.set_option('renderer', wilder.popupmenu_renderer(
   })
 ))
 
-require('ufo').setup()
 
 -- COQ Config
 vim.g.coq_settings = {
   auto_start = 'shut-up',
-  ["display.icons.mode"] = 'none'
+  ["display.icons.mode"] = 'none',
 }
 
 vim.g.loaded_netrw = 1
