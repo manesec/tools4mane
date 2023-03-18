@@ -29,6 +29,10 @@ require('packer').startup(function(use)
     },
   }
 
+  -- file history 
+  use 'nvim-lua/plenary.nvim'
+  use 'gaborvecsei/memento.nvim'
+
   -- love Top Line config
   use 'johann2357/nvim-smartbufs'
   use {'ojroques/nvim-hardline'}
@@ -159,6 +163,7 @@ end)
 -- You'll need to restart nvim, and then it will work.
 if is_bootstrap then
   print '=================================='
+  print '     This is PDE for manesec.'
   print '    Plugins are being installed'
   print '    Wait until Packer completes,'
   print '       then restart nvim'
@@ -255,6 +260,7 @@ vim.keymap.set('n', '<Leader>c2', function()  require("nvim-smartbufs").goto_ter
 vim.keymap.set('n', '<Leader>c3', function()  require("nvim-smartbufs").goto_terminal(3) end )
 vim.keymap.set('n', '<Leader>c4', function()  require("nvim-smartbufs").goto_terminal(4) end )
 vim.keymap.set('n', '<Leader>x', function()  require("nvim-smartbufs").close_current_buffer() end )
+vim.keymap.set('n', '<Leader>X', function()  vim.api.nvim_command('q!') end )
 vim.keymap.set('n', '<Leader>q1', function()  require("nvim-smartbufs").close_buffer(1) end )
 vim.keymap.set('n', '<Leader>q2', function()  require("nvim-smartbufs").close_buffer(2) end )
 vim.keymap.set('n', '<Leader>q3', function()  require("nvim-smartbufs").close_buffer(3) end )
@@ -264,6 +270,7 @@ vim.keymap.set('n', '<Leader>q6', function()  require("nvim-smartbufs").close_bu
 vim.keymap.set('n', '<Leader>q7', function()  require("nvim-smartbufs").close_buffer(7) end )
 vim.keymap.set('n', '<Leader>q8', function()  require("nvim-smartbufs").close_buffer(8) end )
 vim.keymap.set('n', '<Leader>q9', function()  require("nvim-smartbufs").close_buffer(9) end )
+vim.keymap.set('n', '<Leader>h', function() require("memento").toggle() end )
 
 -- Using ufo provider need remap `zR` and `zM`. If Neovim is 0.6.1, remap yourself
 vim.keymap.set('n', '<Leader>+', require('ufo').openAllFolds, { desc = 'openAllFolds' })
@@ -281,7 +288,6 @@ for _, ls in ipairs(language_servers) do
         -- you can add other fields for setting up lsp server in this table
     })
 end
-
 
 -- Command Auto Completion
 local wilder = require('wilder')
@@ -305,11 +311,14 @@ wilder.set_option('renderer', wilder.popupmenu_renderer(
   })
 ))
 
-
-
 require('ufo').setup()
 
-vim.g.coq_settings = { auto_start = 'shut-up' }
+-- COQ Config
+vim.g.coq_settings = {
+  auto_start = 'shut-up',
+  ["display.icons.mode"] = 'none'
+}
+
 vim.g.loaded_netrw = 1
 vim.g.loaded_netrwPlugin = 1
 
@@ -508,7 +517,7 @@ require("nvim-tree").setup({
           symlink_arrow = " ➛ ",
           show = {
             file = false,
-            folder = true,
+            folder = false,
             folder_arrow = true,
             git = true,
             modified = true,
@@ -632,6 +641,9 @@ vim.keymap.set('n', '<leader>sw', require('telescope.builtin').grep_string, { de
 vim.keymap.set('n', '<leader>sg', require('telescope.builtin').live_grep, { desc = '[S]earch by [G]rep' })
 vim.keymap.set('n', '<leader>sd', require('telescope.builtin').diagnostics, { desc = '[S]earch [D]iagnostics' })
 vim.keymap.set('n', '<C-e>', require('nvim-tree.api').tree.toggle, { desc = 'Toggle Nvim Tree' })
+
+-- Exit for terminal
+vim.api.nvim_command('tnoremap <Esc> <C-\\><C-n>')
 
 -- [[ Configure Treesitter ]]
 -- See `:help nvim-treesitter`
@@ -817,17 +829,12 @@ require('hardline').setup {
   },
 }
 
-
-
-
-
-
 -- Turn on lsp status information
 require('fidget').setup()
 
 -- nvim-cmp setup
-local cmp = require 'cmp'
-local luasnip = require 'luasnip'
+-- local cmp = require 'cmp'
+-- local luasnip = require 'luasnip'
 
 -- cmp.setup {
 --   snippet = {
@@ -867,7 +874,6 @@ local luasnip = require 'luasnip'
 --     { name = 'luasnip' },
 --   },
 -- }
-
 
 -- The line beneath this is called `modeline`. See `:help modeline`
 -- vim: ts=2 sts=2 sw=2 et
