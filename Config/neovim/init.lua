@@ -47,6 +47,7 @@ require('packer').startup(function(use)
   use {"ellisonleao/glow.nvim", config = function() require("glow").setup() end}
 
   -- COQ Nvim for python3
+
   use { 'ms-jpq/coq_nvim', run = 'python3 -m coq deps' }
   use 'ms-jpq/coq.artifacts'
   use 'ms-jpq/coq.thirdparty'
@@ -140,6 +141,13 @@ require('packer').startup(function(use)
     end
   }
 
+
+  -- Map
+  use 'echasnovski/mini.map'
+
+  -- Symbols outline
+  use 'simrat39/symbols-outline.nvim'
+
   -- Theme 1
   -- use {vim
   --     'uloco/bluloco.nvim',
@@ -178,6 +186,7 @@ vim.api.nvim_create_autocmd('BufWritePost', {
   group = packer_group,
   pattern = vim.fn.expand '$MYVIMRC',
 })
+
 
 -- [[ VIM Setting options ]]
 -- See `:help vim.o`
@@ -232,7 +241,6 @@ vim.keymap.set('n', 'j', "v:count == 0 ? 'gj' : 'j'", { expr = true, silent = tr
 require('ufo').setup()
 vim.o.foldcolumn = '0' -- '0' is not bad
 vim.o.foldlevel = 99 -- Using ufo provider need a large value, feel free to decrease the value
-vim.o.foldlevelstart = 99
 vim.o.foldenable = true
 
 -- Using ufo provider need remap `zR` and `zM`. If Neovim is 0.6.1, remap yourself
@@ -242,6 +250,12 @@ vim.keymap.set('n', '_', require('ufo').closeAllFolds, { desc = 'closeAllFolds' 
 vim.keymap.set('n', '-', function ()
    require('ufo').closeFoldsWith(1)
  end , { desc = 'closeAllFolds' })
+
+-- Resize Windows
+vim.keymap.set('n', '<C-S-Right>', function() vim.api.nvim_command('vertical resize +1') end)
+vim.keymap.set('n', '<C-S-Left>', function() vim.api.nvim_command('vertical resize -1') end)
+vim.keymap.set('n', '<C-S-Up>', function() vim.api.nvim_command('resize -1') end)
+vim.keymap.set('n', '<C-S-Down>', function() vim.api.nvim_command('resize +1') end)
 
 -- Top bar key binding ...
 vim.keymap.set('n', '<Leader>1', function()  require("nvim-smartbufs").goto_buffer(1) end )
@@ -271,6 +285,8 @@ vim.keymap.set('n', '<Leader>q7', function()  require("nvim-smartbufs").close_bu
 vim.keymap.set('n', '<Leader>q8', function()  require("nvim-smartbufs").close_buffer(8) end )
 vim.keymap.set('n', '<Leader>q9', function()  require("nvim-smartbufs").close_buffer(9) end )
 vim.keymap.set('n', '<Leader>h', function() require("memento").toggle() end )
+
+vim.keymap.set('n', '<Leader>ss', function() vim.api.nvim_command('SymbolsOutline') end)
 
 
 local capabilities = vim.lsp.protocol.make_client_capabilities()
@@ -313,6 +329,8 @@ wilder.set_option('renderer', wilder.popupmenu_renderer(
 vim.g.coq_settings = {
   auto_start = 'shut-up',
   ["display.icons.mode"] = 'none',
+  ["limits.completion_auto_timeout"] = 0.2,
+  ["limits.completion_manual_timeout"] = 1
 }
 
 vim.g.loaded_netrw = 1
@@ -462,6 +480,46 @@ vim.keymap.set('n', '<Leader>ds', function()
   local widgets = require('dap.ui.widgets')
   widgets.centered_float(widgets.scopes)
 end)
+
+
+-- Mane
+require('mini.map').setup()
+MiniMap.config = {
+  -- Highlight integrations (none by default)
+  integrations = nil,
+
+  -- Symbols used to display data
+  symbols = {
+    -- Encode symbols. See `:h MiniMap.config` for specification and
+    -- `:h MiniMap.gen_encode_symbols` for pre-built ones.
+    -- Default: solid blocks with 3x2 resolution.
+    encode = MiniMap.gen_encode_symbols.dot('4x2'),
+
+    -- Scrollbar parts for view and line. Use empty string to disable any.
+    scroll_line = '┃',
+    scroll_view = ' ',
+  },
+
+  -- Window options
+  window = {
+    -- Whether window is focusable in normal way (with `wincmd` or mouse)
+    focusable = false,
+
+    -- Side to stick ('left' or 'right')
+    side = 'right',
+
+    -- Whether to show count of multiple integration highlights
+    show_integration_count = true,
+
+    -- Total width
+    width = 10,
+
+    -- Value of 'winblend' option
+    winblend = 25,
+  },
+}
+vim.keymap.set('n', '<Leader>m', MiniMap.toggle)
+
 
 
 -- Debug UI
@@ -827,6 +885,74 @@ require('hardline').setup {
 
 -- Turn on lsp status information
 require('fidget').setup()
+
+-- Symbols OutLine
+local opts = {
+  highlight_hovered_item = true,
+  show_guides = true,
+  auto_preview = false,
+  position = 'right',
+  relative_width = true,
+  width = 25,
+  auto_close = false,
+  show_numbers = false,
+  show_relative_numbers = false,
+  show_symbol_details = true,
+  preview_bg_highlight = 'Pmenu',
+  autofold_depth = nil,
+  auto_unfold_hover = true,
+  fold_markers = { '+', '-' },
+  wrap = false,
+  keymaps = { -- These keymaps can be a string or a table for multiple keys
+    close = {"<Esc>", "q"},
+    goto_location = "<Cr>",
+    focus_location = "o",
+    hover_symbol = "<C-space>",
+    toggle_preview = "K",
+    rename_symbol = "r",
+    code_actions = "a",
+    fold = "-",
+    unfold = "=",
+    fold_all = "_",
+    unfold_all = "+",
+    fold_reset = "R",
+  },
+  lsp_blacklist = {},
+  symbol_blacklist = {},
+  symbols = {
+    File = { icon = "File", hl = "@text.uri" },
+    Module = { icon = "Mod", hl = "@namespace" },
+    Namespace = { icon = "Name", hl = "@namespace" },
+    Package = { icon = "Pack", hl = "@namespace" },
+    Class = { icon = "Class", hl = "@type" },
+    Method = { icon = "Method", hl = "@method" },
+    Property = { icon = ".", hl = "@method" },
+    Field = { icon = "Field", hl = "@field" },
+    Constructor = { icon = "", hl = "@constructor" },
+    Enum = { icon = "Enum", hl = "@type" },
+    Interface = { icon = "I", hl = "@type" },
+    Function = { icon = "f", hl = "@function" },
+    Variable = { icon = "v", hl = "@constant" },
+    Constant = { icon = "c", hl = "@constant" },
+    String = { icon = "s", hl = "@string" },
+    Number = { icon = "n", hl = "@number" },
+    Boolean = { icon = "b", hl = "@boolean" },
+    Array = { icon = "a", hl = "@constant" },
+    Object = { icon = "Obj", hl = "@type" },
+    Key = { icon = "k", hl = "@type" },
+    Null = { icon = "?", hl = "@type" },
+    EnumMember = { icon = "", hl = "@field" },
+    Struct = { icon = "𝓢", hl = "@type" },
+    Event = { icon = "Evt", hl = "@type" },
+    Operator = { icon = "+", hl = "@operator" },
+    TypeParameter = { icon = "𝙏", hl = "@parameter" },
+    Component = { icon = "", hl = "@function" },
+    Fragment = { icon = "", hl = "@constant" },
+  },
+}
+
+
+require("symbols-outline").setup(opts)
 
 -- nvim-cmp setup
 -- local cmp = require 'cmp'
