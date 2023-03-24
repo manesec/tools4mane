@@ -430,7 +430,7 @@ dapui.setup(
 dap.set_log_level('TRACE')
 dap.adapters.python = {
   type = 'executable';
-  command = '/usr/bin/python';
+  command = '/usr/bin/python3';
   args = { '-m', 'debugpy.adapter' };
 }
 dap.configurations.python = {
@@ -440,7 +440,7 @@ dap.configurations.python = {
     name = "Launch file";
     program = "${file}";
     pythonPath = function()
-      return '/usr/bin/python'
+      return '/usr/bin/python3'
     end;
   },
 }
