@@ -6,8 +6,10 @@ echo [*] apt installing ...
 sudo apt-get install -y python3-dev python3-pip python3-dev python3-pip vim 
 
 echo [*] getting and setting neovim ...
-wget https://github.com/neovim/neovim/releases/latest/download/nvim-linux64.deb -O /tmp/nvim-linux64.deb
-sudo dpkg -i /tmp/nvim-linux64.deb
+rm /tmp/nvim.appimage > /dev/null
+wget https://github.com/neovim/neovim/releases/latest/download/nvim.appimage -O /tmp/nvim.appimage
+sudo cp /tmp/nvim.appimage /bin/nvim
+
 mkdir -p ~/.config/nvim
 wget https://raw.githubusercontent.com/manesec/tools4mane/main/Config/neovim/init.lua -O  ~/.config/nvim/init.lua
 
