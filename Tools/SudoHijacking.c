@@ -2,8 +2,6 @@
 // su/sudo from root to another user allows TTY hijacking and arbitrary code execution
 // Source: First written 2016-10-17; Last updated 2023-03-16
 
-
-
 // manesec note: 
 // frist must be run su or sudo to switch user.
 
@@ -16,6 +14,8 @@
 // (root) # whoami
 // root
 
+// We can use `ps -axjf` or `pstree` to see if run as su or sudo, 
+// or using `w` to guess.
 
 #include <fcntl.h>
 #include <stdio.h>
