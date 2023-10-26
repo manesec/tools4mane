@@ -16,7 +16,7 @@ import subprocess
 
 gitlogs = subprocess.getoutput("git log | grep commit")
 for line in gitlogs.split("\n"):
-    line_sp = line.strip().split(" ")
+    line_sp = line.strip().split()
     if (line_sp[0] == "commit"):
         print(subprocess.getoutput("git show %s" % (line_sp[1])))
 
