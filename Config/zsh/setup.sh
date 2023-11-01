@@ -9,7 +9,7 @@ then
 fi
 
 echo "[*] Clearning up zsh ..."
-rm -rf /home/mane/.oh-my-zsh 2> /dev/null
+rm -rf $HOME/.oh-my-zsh 2> /dev/null
 
 echo "[*] Setting up zsh ..."
 sudo apt install -y zsh-autosuggestions zsh-syntax-highlighting zsh
