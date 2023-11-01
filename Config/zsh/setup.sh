@@ -30,6 +30,7 @@ git clone --depth 1 -- https://github.com/marlonrichert/zsh-autocomplete.git $ZS
 
 echo "[*] Making config ..."
 rm ~/.zshrc
-curl https://raw.githubusercontent.com/manesec/tools4mane/main/Config/zsh/zshrc -O ~/.zshrc
-
+curl "https://raw.githubusercontent.com/manesec/tools4mane/main/Config/zsh/zshrc" -o ~/.zshrc
+echo ""
 echo "OK! Type 'zsh' to use zsh like bash!"
+echo ""
