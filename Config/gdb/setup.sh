@@ -111,7 +111,7 @@ flag_number:
 
 example:
 toggle-eflags 0  --  toggle CF
-toggle-eflags $CF  --  toggle CF
+toggle-eflags \$CF  --  toggle CF
 end
 
 # invoke-pwndbg
