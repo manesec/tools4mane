@@ -50,8 +50,8 @@ echo \n=============================================================  \n\n
 # help command
 define help-mane
 echo [*] Current Support Commands:  \n
-echo invoke-pwndbg: Initializes PwnDBG \n
-echo invoke-gef: Initializes GEF \n
+echo invoke-pwndbg -- Initializes PwnDBG \n
+echo invoke-gef -- Initializes GEF \n
 end
 document help-mane
 Get help from tools4mane.
@@ -61,20 +61,21 @@ end
 define invoke-pwndbg
 source ~/.gdb-plugins/pwndbg/gdbinit.py
 source ~/.gdb-plugins/splitmind/gdbinit.py
+
 python
 import splitmind
 (splitmind.Mind()
   .tell_splitter(show_titles=True)
   .tell_splitter(set_title="Main")
   .right(display="backtrace", size="25%")
-  .above(of="main", display="disasm", size="80%", banner="top")
-  .show("code", on="disasm", banner="none")
-  .right(cmd='tty; tail -f /dev/null', size="65%", clearing=False)
+  .above(of="main", cmd='tty; tail -f /dev/null', clearing=False, display="Input / Output", size="80%", banner="top")
   .tell_splitter(set_title='Input / Output')
-  .above(display="stack", size="75%")
-  .above(display="legend", size="25%")
+  .right(display="disasm", size="80%", banner="top")
+  .show("code", on="disasm", banner="none")
+  .above(display="stack", size="35%")
+  .below(of="backtrace", cmd="ipython3", size="85%")
+  .above(display="legend", size="70%")
   .show("regs", on="legend")
-  .below(of="backtrace", cmd="ipython3", size="30%")
 ).build(nobanner=True)
 end
 
