@@ -59,46 +59,46 @@ Get help from tools4mane.
 end
 
 # eflag command helper
-set $CF=0
-set $PF=2
-set $AF=4
-set $ZF=6
-set $SF=7
-set $IF=9
-set $DF=10
-set $OF=11
+set \$CF=0
+set \$PF=2
+set \$AF=4
+set \$ZF=6
+set \$SF=7
+set \$IF=9
+set \$DF=10
+set \$OF=11
 define toggle-eflags
-set $CF=0
-set $PF=2
-set $AF=4
-set $ZF=6
-set $SF=7
-set $IF=9
-set $DF=10
-set $OF=11
-if ($arg0 == 0 )
-  set $eflags ^= (1 << 0)
+set \$CF=0
+set \$PF=2
+set \$AF=4
+set \$ZF=6
+set \$SF=7
+set \$IF=9
+set \$DF=10
+set \$OF=11
+if (\$arg0 == 0 )
+  set \$eflags ^= (1 << 0)
 end
-if ($arg0 == 2 )
-  set $eflags ^= (1 << 2)
+if (\$arg0 == 2 )
+  set \$eflags ^= (1 << 2)
 end
-if ($arg0 == 4 )
-  set $eflags ^= (1 << 4)
+if (\$arg0 == 4 )
+  set \$eflags ^= (1 << 4)
 end
-if ($arg0 == 6 )
-  set $eflags ^= (1 << 6)
+if (\$arg0 == 6 )
+  set \$eflags ^= (1 << 6)
 end
-if ($arg0 == 7 )
-  set $eflags ^= (1 << 7)
+if (\$arg0 == 7 )
+  set \$eflags ^= (1 << 7)
 end
-if ($arg0 == 9 )
-  set $eflags ^= (1 << 9)
+if (\$arg0 == 9 )
+  set \$eflags ^= (1 << 9)
 end
-if ($arg0 == 10 )
-  set $eflags ^= (1 << 10)
+if (\$arg0 == 10 )
+  set \$eflags ^= (1 << 10)
 end 
-if ($arg0 == 11 )
-  set $eflags ^= (1 << 11)
+if (\$arg0 == 11 )
+  set \$eflags ^= (1 << 11)
 end
 info registers eflags
 end
@@ -106,8 +106,8 @@ document toggle-eflags
 toggle-eflags < flag_number / flag_variable > -- used to toggle single eflags.
 
 flag_number: 
-$CF = 0    $PF = 2    $AF = 4     $ZF = 6
-$SF = 7    $IF = 9    $DF = 10    $OF = 11
+\$CF = 0    \$PF = 2    \$AF = 4     \$ZF = 6
+\$SF = 7    \$IF = 9    \$DF = 10    \$OF = 11
 
 example:
 toggle-eflags 0  --  toggle CF
