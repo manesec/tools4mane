@@ -5,7 +5,8 @@
 
 import requests,os,json
 
-IMPORT_DIR = "/home/mane/Downloads/x/x-cloudtrail"
+IMPORT_DIR = "/home/mane/Downloads/htb/nubilum_1_int/CloudTrail"
+INDEX = ["aws-default","aws-unknow"]
 
 def found_json():
     json_file_lists = []
@@ -23,15 +24,32 @@ def found_json():
         index = index +  1
 
 def process_json_file(filename):
-    with open(filename, 'r') as f:
-        data = f.read()
-        j = json.loads(data)["Records"]
-        print("[*] Importing %s Records ..." % (len(j)))
-        for records in j:
-            import_to_elk(records)
+    # Method 1
+    try:
+        with open(filename, 'r') as f:
+            data = f.read()
+            j = json.loads(data)["Records"]
+            print("[*] Importing %s Records ..." % (len(j)))
+            for records in j:
+                import_to_elk(records,INDEX[0])
+            return
+    except Exception as e:
+        print("[*] %s " %  (filename))
+        print("[!] Error: %s" % (e))
 
-def import_to_elk(data):
-    data = """{ "index" : { "_index" : "test" } } \n%s\n\n \r\n""" % (json.dumps(data))
+    # Method 2
+    try:
+        with open(filename, 'r') as f:
+            data = f.read()
+            j = json.loads(data)
+            import_to_elk(j,INDEX[1])
+        return
+    except Exception as e:
+        print("[*] %s " %  (filename))
+        print("[!] Error: %s" % (e))
+
+def import_to_elk(data,index):
+    data = """{ "index" : { "_index" : "%s" } } \n%s\n\n \r\n""" % (index,json.dumps(data))
     proxies = {
        'http': 'http://127.0.0.1:8080',
        'https': 'http://127.0.0.1:8080',
