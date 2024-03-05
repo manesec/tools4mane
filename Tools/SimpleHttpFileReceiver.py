@@ -2,10 +2,12 @@
 # write by @manesec.
 
 # Reference : https://stackoverflow.com/questions/46332093/how-to-get-data-from-fieldstorage
+# Reference : https://gist.github.com/touilleMan/eb02ea40b93e52604938
 
 import http.server, socketserver
-import io, cgi ,os
+import io, re ,os
 import argparse
+
 
 print("""
  ▄▀▀▄ ▄▀▄  ▄▀▀█▄   ▄▀▀▄ ▀▄  ▄▀▀█▄▄▄▄  ▄▀▀▀▀▄  ▄▀▀█▄▄▄▄  ▄▀▄▄▄▄  
@@ -36,7 +38,7 @@ Example:
 parser.add_argument('-l',"--listen",type=str, default="0.0.0.0", help="Listen interface, default is 0.0.0.0")
 parser.add_argument('-p',"--port",type=int, default=8080, help="Listen port, default is 8080")
 parser.add_argument('-d',"--directory",type=str, default=".", help="Save file directory.")
-parser.add_argument('-f',"--formstr",type=str, default="<any>", help="Post from str, like: form['file']")
+parser.add_argument('-f',"--formstr",type=str, default="file", help="Post from str, like: form['file']")
 parser.add_argument('-r',"--rename",type=str, default="<none>", help="Rename the file start with str.")
 
 args = parser.parse_args()
@@ -57,9 +59,9 @@ class CustomHTTPRequestHandler(http.server.SimpleHTTPRequestHandler):
 
         f = io.BytesIO()
         if return_status:
-            f.write(b"success to upload \n")
+            f.write(b"ok \n")
         else:
-            f.write(b"server error\n")
+            f.write(b"error\n")
 
         length = f.tell()
         f.seek(0)
@@ -73,54 +75,61 @@ class CustomHTTPRequestHandler(http.server.SimpleHTTPRequestHandler):
 
     def deal_post_data(self):
         global rename_index
-        ctype, pdict = cgi.parse_header(self.headers['Content-Type'])
-        pdict['boundary'] = bytes(pdict['boundary'], "utf-8")
-        pdict['CONTENT-LENGTH'] = int(self.headers['Content-Length'])
-        if ctype == 'multipart/form-data':
-            
-            form = cgi.FieldStorage( fp=self.rfile, headers=self.headers, environ={'REQUEST_METHOD':'POST', 'CONTENT_TYPE':self.headers['Content-Type'], })
+        content_type = self.headers['content-type']
+        if not content_type:
+            print("[E] Content-Type header doesn't contain boundary")
+            return False
 
-            post_str = ""
-            save_path = ""
+        boundary = content_type.split("=")[1].encode()
+        remainbytes = int(self.headers['content-length'])
+        line = self.rfile.readline()
+        remainbytes -= len(line)
+        if not boundary in line:
+            print("[E] Content NOT have boundary")
+            return False
 
-            if (args.formstr == "<any>"):
-                post_str = form.keys()[0]
-            elif (form.keys()[0] != args.formstr):
-                print("[!] Rejection request, cause %s != %s." % (form.keys()[0] , args.formstr))
-                return False
+        line = self.rfile.readline()
+        remainbytes -= len(line)
+        filename = re.findall(r'Content-Disposition.*name="%s"; filename="(.*)"' % (args.formstr), line.decode())
+        if not filename:
+            print("[E] Can't find out file name...")
+            return False
 
-            post_str = form.keys()[0]
-            try:
-                if isinstance(form[post_str], list):
-                    for record in form[post_str]:
-                        if (args.rename == "<none>"):
-                            save_path = os.path.abspath(os.getcwd() + "/" + args.directory + "/" + record.filename)
-                        else:
-                            save_path = os.getcwd() + "/" + args.directory + "/" + "%s-%s" % (args.rename,rename_index)
-                            rename_index += 1
-                        save_path = os.path.abspath(save_path)
+        if args.rename != "<none>":
+            filename = os.getcwd() + "/" + args.directory + "/" + "%s-%s" % (args.rename,rename_index)
+            rename_index += 1
+        else:
+            path = self.translate_path(self.path)
+            filename = os.path.join(path, filename[0])
 
-                        print("[*] Receiving %s ..." % (record.filename))
-                        open(save_path, "wb").write(record.file.read())
-                        print("[!] Saved %s to %s." % (record.filename,save_path))
-                else:
-
-                    if (args.rename == "<none>"):
-                        save_path = os.path.abspath(os.getcwd() + "/" + args.directory + "/" + form[post_str].filename)
-                    else:
-                        save_path = os.getcwd() + "/" + args.directory + "/" + "%s-%s" % (args.rename,rename_index)
-                        rename_index += 1
-                    save_path = os.path.abspath(save_path)
-
-                    print("[*] Receiving %s ..." % (form[post_str].filename))
-                    open(save_path, "wb").write(form[post_str].file.read())
-                    print("[!] Saved %s into %s" % (form[post_str].filename,save_path))
-
-            except IOError:
-                    print("[ERR] Can't create file to write, do you have permission to write?")
-                    return False
-        
-        return True
+        line = self.rfile.readline()
+        remainbytes -= len(line)
+        line = self.rfile.readline()
+        remainbytes -= len(line)
+        try:
+            out = open(filename, 'wb')
+        except IOError:
+            print("[E] Can't create file to write, do you have permission to write?")
+            return False
+                
+        preline = self.rfile.readline()
+        remainbytes -= len(preline)
+        while remainbytes > 0:
+            line = self.rfile.readline()
+            remainbytes -= len(line)
+            if boundary in line:
+                preline = preline[0:-1]
+                if preline.endswith(b'\r'):
+                    preline = preline[0:-1]
+                out.write(preline)
+                out.close()
+                print("[*] File '%s' upload success!" % filename)
+                return True
+            else:
+                out.write(preline)
+                preline = line
+        print("[E] Unexpect Ends of data.")
+        return False
 
 Handler = CustomHTTPRequestHandler
 with socketserver.TCPServer((args.listen, args.port), Handler) as httpd:
@@ -128,9 +137,14 @@ with socketserver.TCPServer((args.listen, args.port), Handler) as httpd:
     if not (args.listen == "0.0.0.0"):
         showserver = args.listen
 
-    print(f"""Tips: Upload file command like :
-    curl -F '{args.formstr}=@<FILENAME>' http://{showserver}:{args.port}/
-    curl -F '{args.formstr}=@<FILE1>' -F '{args.formstr}=@<FILE2>' http://{showserver}:{args.port}/
+    print(f"""
+    Tips: Upload file command like :
+        curl -F '{args.formstr}=@<FILENAME>' http://{showserver}:{args.port}/
+        cmd.exe /c curl -F '{args.formstr}=@<filename>' http://{showserver}:{args.port}/
+    
+    Tips: Upload folder like :
+        for f in *; do curl -F "{args.formstr}=@$f" http://{showserver}:{args.port}/ ; done
+        gci -file -recurse "<directory>" | foreach {{ cmd.exe /c curl -F "{args.formstr}=@$($_.FullName)"  http://{showserver}:{args.port}/ }}
     """)
 
     print("[*] Starting SimpleFileReceiver in %s:%s ..." % (args.listen,args.port))
