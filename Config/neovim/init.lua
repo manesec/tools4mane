@@ -101,8 +101,7 @@ require('packer').startup(function(use)
     'nvim-tree/nvim-tree.lua',
       requires = {
         'nvim-tree/nvim-web-devicons', -- optional, for file icons
-      },
-    tag = 'nightly' -- optional, updated every week. (see issue #1193)
+      }
   }
 
   use {  -- Auto pair
@@ -530,19 +529,6 @@ require("neodev").setup({
 
 -- empty setup using defaults
 require("nvim-tree").setup({
-      view = {
-        mappings = {
-          list = {
-            { key = "u", action = "dir_up" },
-            { key = "<C-e>",
-              action = "mane",
-              action_cb = function()
-                require("nvim-tree").toggle()
-              end,
-            }
-          },
-        },
-      },
       renderer = {
         add_trailing = false,
         group_empty = false,
@@ -695,7 +681,10 @@ vim.keymap.set('n', '<leader>sh', require('telescope.builtin').help_tags, { desc
 vim.keymap.set('n', '<leader>sw', require('telescope.builtin').grep_string, { desc = '[S]earch current [W]ord' })
 vim.keymap.set('n', '<leader>sg', require('telescope.builtin').live_grep, { desc = '[S]earch by [G]rep' })
 vim.keymap.set('n', '<leader>sd', require('telescope.builtin').diagnostics, { desc = '[S]earch [D]iagnostics' })
+
+-- nvim tree
 vim.keymap.set('n', '<C-e>', require('nvim-tree.api').tree.toggle, { desc = 'Toggle Nvim Tree' })
+vim.keymap.set('n', '<leader>t', require('nvim-tree.api').tree.toggle, { desc = 'Toggle Nvim Tree' })
 
 -- Exit for terminal
 vim.api.nvim_command('tnoremap <Esc> <C-\\><C-n>')
