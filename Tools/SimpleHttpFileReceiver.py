@@ -18,7 +18,7 @@ print("""
 █    █    ▐   ▐   █    ▐    █    ▐    ▐       █    ▐   █     ▐  
 ▐    ▐            ▐         ▐                 ▐        ▐        
     Simple File Receiver via http post - Tools4me by @manesec.
-                    Version: 20221008
+                    Version: 20240305
             https://github.com/manesec/tools4mane
 ---------------------------------------------------------------""")
 
