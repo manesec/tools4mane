@@ -10,3 +10,10 @@ git clone https://github.com/manesec/tmux-command-macros.git ~/.tmux/plugins/tmu
 
 echo "[Tmux] Installing config ... "
 wget https://raw.githubusercontent.com/manesec/tools4mane/main/Config/tmux/tmuxWithMacros.conf -O ~/.tmux.conf
+
+chmod +x ~/.tmux/plugins/tmux-command-macros/tmux-command-macros.tmux
+chmod +x ~/.tmux/plugins/tmux-command-macros/tmux-command-runner.sh
+
+tmux new-session -d -s setupmux "tmux source ~/.tmux.conf"
+
+echo "[Tmux] OK"
