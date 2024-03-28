@@ -12,6 +12,7 @@
 # or `invoke-gef` to start gef
 
 echo "[*] Downloading gdb ..."
+sudo apt install -y sudo python3 python3-pip git
 sudo apt install -y gdb wget ipython3
 sudo pip install gdbgui --upgrade
 sudo pip install pygments
