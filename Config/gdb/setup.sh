@@ -12,9 +12,10 @@
 # or `invoke-gef` to start gef
 
 
+export DEBIAN_FRONTEND=noninteractive
 
 ## make sure sudo command installed in the system
-if [ "$EUID" -eq 0 ]
+if [ "$EUID" -eq 0 ] ; then
   echo "[*] Installing Base Packages ..."
   apt install -y sudo python3 python3-pip git wget
 fi
