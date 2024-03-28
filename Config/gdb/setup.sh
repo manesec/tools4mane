@@ -12,16 +12,14 @@
 # or `invoke-gef` to start gef
 
 
-export DEBIAN_FRONTEND=noninteractive
-
 ## make sure sudo command installed in the system
 if [ "$EUID" -eq 0 ] ; then
   echo "[*] Installing Base Packages ..."
-  apt install -y sudo python3 python3-pip git wget
+  DEBIAN_FRONTEND=noninteractive apt install -y sudo python3 python3-pip git wget gdb wget ipython3
+else
+  sudo DEBIAN_FRONTEND=noninteractive apt install -y sudo python3 python3-pip git wget gdb wget ipython3
 fi
 
-echo "[*] Downloading gdb ..."
-sudo apt install -y gdb wget ipython3
 sudo pip install gdbgui --upgrade
 sudo pip install pygments
 
