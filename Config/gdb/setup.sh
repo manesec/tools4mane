@@ -10,14 +10,16 @@
 
 # type `gdb` and `invoke-pwndbg` to start pwndbg 
 # or `invoke-gef` to start gef
-
+export DEBIAN_FRONTEND=noninteractive
 
 ## make sure sudo command installed in the system
+need_package="sudo python3 python3-pip git wget gdb wget ipython3 tmux"
+
 if [ "$EUID" -eq 0 ] ; then
   echo "[*] Installing Base Packages ..."
-  DEBIAN_FRONTEND=noninteractive apt install -y sudo python3 python3-pip git wget gdb wget ipython3
+  DEBIAN_FRONTEND=noninteractive apt install -y $need_package
 else
-  sudo DEBIAN_FRONTEND=noninteractive apt install -y sudo python3 python3-pip git wget gdb wget ipython3
+  sudo DEBIAN_FRONTEND=noninteractive apt install -y $need_package
 fi
 
 sudo pip install gdbgui --upgrade
