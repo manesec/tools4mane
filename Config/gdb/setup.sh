@@ -11,8 +11,15 @@
 # type `gdb` and `invoke-pwndbg` to start pwndbg 
 # or `invoke-gef` to start gef
 
+
+
+## make sure sudo command installed in the system
+if [ "$EUID" -eq 0 ]
+  echo "[*] Installing Base Packages ..."
+  apt install -y sudo python3 python3-pip git wget
+fi
+
 echo "[*] Downloading gdb ..."
-sudo apt install -y sudo python3 python3-pip git
 sudo apt install -y gdb wget ipython3
 sudo pip install gdbgui --upgrade
 sudo pip install pygments
