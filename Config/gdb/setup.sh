@@ -22,8 +22,8 @@ else
   sudo DEBIAN_FRONTEND=noninteractive apt install -y $need_package
 fi
 
-sudo pip install gdbgui --upgrade
-sudo pip install pygments
+sudo pip3 install gdbgui --upgrade
+sudo pip3 install pygments
 
 mkdir -p "$HOME/.gdb-plugins"
 cd "$HOME/.gdb-plugins"
