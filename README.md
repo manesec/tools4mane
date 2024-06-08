@@ -1,3 +1,3 @@
 # Tools4mane
 
-Some tools/script make by manesec to help for pentest.
+Some tools/script make or collection by manesec to help for pentest.
