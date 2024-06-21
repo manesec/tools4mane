@@ -1,0 +1,126 @@
+{
+    "queries": [
+        {
+            "name": "List All Users",
+            "category": "Tools4mane",
+            "queryList": [
+                {
+                    "final": true,
+                    "query": "MATCH (m:User) RETURN m",
+                    "allowCollapse": true
+                }
+            ]
+        },
+        {
+            "name": "List All Groups",
+            "category": "Tools4mane",
+            "queryList": [
+                {
+                    "final": true,
+                    "query": "MATCH (m:Group) RETURN m",
+                    "allowCollapse": true
+                }
+            ]
+        },
+        {
+            "name": "List All Computer",
+            "category": "Tools4mane",
+            "queryList": [
+                {
+                    "final": true,
+                    "query": "MATCH (m:Computer) RETURN m",
+                    "allowCollapse": true
+                }
+            ]
+        },
+        {
+            "name": "List All Domain",
+            "category": "Tools4mane",
+            "queryList": [
+                {
+                    "final": true,
+                    "query": "MATCH (m:Domain) RETURN m",
+                    "allowCollapse": true
+                }
+            ]
+        },
+        {
+            "name": "List All GPOs",
+            "category": "Tools4mane",
+            "queryList": [
+                {
+                    "final": true,
+                    "query": "Match (n:GPO) RETURN n"
+                }
+            ]
+        },
+        {
+            "name": "List All Owned Users",
+            "category": "Tools4mane",
+            "queryList": [
+                {
+                    "final": true,
+                    "query": "MATCH (m:User) WHERE m.owned=TRUE RETURN m",
+                    "allowCollapse": true
+                }
+            ]
+        },
+        {
+            "name": "List All Owned Groups",
+            "category": "Tools4mane",
+            "queryList": [
+                {
+                    "final": true,
+                    "query": "MATCH (m:Group) WHERE m.owned=TRUE RETURN m",
+                    "allowCollapse": true
+                }
+            ]
+        },
+        {
+            "name": "List All Owned Computers",
+            "category": "Tools4mane",
+            "queryList": [
+                {
+                    "final": true,
+                    "query": "MATCH (m:Computer) WHERE m.owned=TRUE RETURN m",
+                    "allowCollapse": true
+                }
+            ]
+        },
+        {
+            "name": "Find All Group from Owned Users",
+            "category": "Tools4mane",
+            "queryList": [
+                {
+                    "final": true,
+                    "query": "MATCH (m:User) WHERE m.owned=TRUE WITH m MATCH p=(m)-[:MemberOf*1..]->(n:Group) RETURN p",
+                    "allowCollapse": true
+                }
+            ]
+        },
+        {
+            "name": "Find All Group from Owned Nodes",
+            "category": "Tools4mane",
+            "queryList": [
+                {
+                    "final": true,
+                    "query": "MATCH (u:User {owned:true}), (g:Group), p=(u)-[:MemberOf]->(g) RETURN p",
+                    "props": {},
+                    "allowCollapse": true
+                }
+            ]
+        },
+        {
+            "name": "Find Users Do Not Require Password",
+            "category": "Tools4mane",
+            "queryList": [
+                {
+                    "final": true,
+                    "query": "MATCH (u:User) WHERE u.passwordnotreqd return u",
+                    "props": {},
+                    "allowCollapse": true
+                }
+            ]
+        }
+    ]
+}
