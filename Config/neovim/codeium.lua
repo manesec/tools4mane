@@ -32,14 +32,27 @@ require('packer').startup(function(use)
   -- file history 
   use 'nvim-lua/plenary.nvim'
   use 'gaborvecsei/memento.nvim'
-
+ 
   -- formatter
-  use { 
-  	"stevearc/conform.nvim",
-  	config = function()
-  		require("conform").setup()
-  	end
-  }
+	use { 
+		"stevearc/conform.nvim",
+		config = function()
+			require("conform").setup()
+		end
+	}
+
+  -- codeium
+  use {
+     'Exafunction/codeium.vim',
+     config = function ()
+       -- Change '<C-g>' here to any keycode you like.
+       vim.keymap.set('i', '<C-f>', function () return vim.fn['codeium#Accept']() end, { expr = true, silent = true })
+       -- vim.keymap.set('i', '<C-a>', function() return vim.fn['codeium#CycleCompletions'](1) end, { expr = true, silent = true })
+       vim.keymap.set('i', '<C-d>', function() return vim.fn['codeium#CycleCompletions'](-1) end, { expr = true, silent = true })
+       -- vim.keymap.set('i', '<C-s>', function() return vim.fn['codeium#Clear']() end, { expr = true, silent = true })
+     end
+  } 
+
 
   -- love Top Line config
   use 'johann2357/nvim-smartbufs'
@@ -84,7 +97,6 @@ require('packer').startup(function(use)
   use 'tpope/vim-rhubarb'
   use 'lewis6991/gitsigns.nvim'
 
-  -- Theme 0
   use 'navarasu/onedark.nvim' -- Theme inspired by Atom
 
   -- Theme 1, dark light
@@ -624,6 +636,8 @@ vim.api.nvim_create_autocmd('TextYankPost', {
   pattern = '*',
 })
 
+
+
 -- Set lualine as statusline
 -- See `:help lualine.txt`
 require('lualine').setup {
@@ -633,6 +647,7 @@ require('lualine').setup {
     component_separators = '|',
     section_separators = '',
   },
+  sections = { lualine_b = { "%3{codeium#GetStatusString()}" } }
 }
 
 -- Enable Comment.nvim
@@ -954,6 +969,8 @@ local opts = {
 
 require("symbols-outline").setup(opts)
 
+
+
 -- nvim-cmp setup
 -- local cmp = require 'cmp'
 -- local luasnip = require 'luasnip'
@@ -997,9 +1014,6 @@ require("symbols-outline").setup(opts)
 --   },
 -- }
 
--- The line beneath this is called `modeline`. See `:help modeline`
--- vim: ts=2 sts=2 sw=2 et
-
 -- Formatter
 local conform = require("conform")
 
@@ -1017,3 +1031,7 @@ vim.api.nvim_create_user_command(
   {bang = true, desc = "Format This Documents"}
 )
 
+
+
+-- The line beneath this is called `modeline`. See `:help modeline`
+-- vim: ts=2 sts=2 sw=2 et
