@@ -11,6 +11,7 @@ wget https://github.com/neovim/neovim/releases/latest/download/nvim.appimage -O 
 sudo cp /tmp/nvim.appimage /bin/nvim
 sudo chmod +x /bin/nvim
 
+rm -rf ~/.config/nvim
 mkdir -p ~/.config/nvim
 wget https://raw.githubusercontent.com/manesec/tools4mane/main/Config/neovim/init.lua -O  ~/.config/nvim/init.lua
 
