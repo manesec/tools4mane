@@ -97,6 +97,7 @@ require('packer').startup(function(use)
   use 'tpope/vim-rhubarb'
   use 'lewis6991/gitsigns.nvim'
 
+  -- Theme 0
   use 'navarasu/onedark.nvim' -- Theme inspired by Atom
 
   -- Theme 1, dark light
