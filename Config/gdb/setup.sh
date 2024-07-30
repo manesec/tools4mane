@@ -160,7 +160,9 @@ document invoke-gef
 Initializes GEF (GDB Enhanced Features)
 end
 
+set disassembly-flavor intel
+set disassemble-next-line off
+
 EOF
 
 echo "[!] DONE! start gdb and type 'help-mane' to get help."
-
