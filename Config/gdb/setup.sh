@@ -83,7 +83,7 @@ if [ "$support_ghidra" -eq 1 ]; then
   echo "[*] Installing r2ghidra ..."
   sudo r2pm -cig r2ghidra
   echo "[*] Installing r2pipe for pwndbg ..."
-  bash -c 'source ~/.gdb-plugins/pwndbg/.venv/bin/activate ; pip3 install r2pipe'
+  bash -c "source ~/.gdb-plugins/pwndbg/.venv/bin/activate ; python$PYVER -m pip install r2pipe"
 fi
 
 

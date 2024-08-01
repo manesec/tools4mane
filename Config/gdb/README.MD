@@ -49,3 +49,15 @@ invoke-gef -- Initializes GEF.
 invoke-peda -- Initializes PEDA. 
 toggle-eflags -- Toggle eflags helper. 
 ```
+
+
+## FAQ
+
+If ghidra window show on GDB: `r2pipe or rzpipe not available, but required for r2/rz->ghidra bridge`, it mean some python version was different and library install incorrectly.
+
+You can paste the code to terminal to quick fix it or install newer version of kali.
+
+```bash
+PYVER=$(gdb -batch -q --nx -ex 'pi import platform; print(".".join(platform.python_version_tuple()[:2]))')
+python3.12 -m pip install r2pipe --break-system-packages
+```
