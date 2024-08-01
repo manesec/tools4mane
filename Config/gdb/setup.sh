@@ -4,9 +4,8 @@
 #-- Github: Tools4mane https://github.com/manesec/Tools4mane
 
 # 1. auto install pwndbg and gef
-# 2. add gdbui, start with command: `gdbgui`
-# 3. pwndbg support for tmux
-# 4. better color for gef.
+# 2. pwndbg support for tmux
+# 3. better color for gef.
 
 # type `gdb` and `invoke-pwndbg` to start pwndbg 
 # or `invoke-gef` to start gef
@@ -24,8 +23,12 @@ else
   sudo DEBIAN_FRONTEND=noninteractive apt install -y $need_package
 fi
 
-sudo pip3 install gdbgui --upgrade
 sudo pip3 install pygments
+
+# fix different python3 version
+echo "[*] Installing python3 for GDB ..."
+PYVER=$(gdb -batch -q --nx -ex 'pi import platform; print(".".join(platform.python_version_tuple()[:2]))')
+sudo apt install -y "python$PYVER-full"
 
 mkdir -p "$HOME/.gdb-plugins"
 cd "$HOME/.gdb-plugins"
