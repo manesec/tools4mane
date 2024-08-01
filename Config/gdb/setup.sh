@@ -12,15 +12,17 @@
 ## Vars
 support_ghidra=0
 
-## Asking for support ghidea
-while true; do
-    read -p "[Experimental] Do you want to support ghidra decomplie? (y/n): " answer
-    case $answer in
-        [Yy]* ) support_ghidra=1; break;;
-        [Nn]* ) support_ghidra=0; break;;
-        * ) echo "Please answer yes (y) or no (n).";;
-    esac
-done
+## Asking for support ghidea, root is no support
+if [ "$EUID" -ne 0 ] ; then
+  while true; do
+      read -p "[Experimental] Do you want to support ghidra decomplie? (y/n): " answer
+      case $answer in
+          [Yy]* ) support_ghidra=1; break;;
+          [Nn]* ) support_ghidra=0; break;;
+          * ) echo "Please answer yes (y) or no (n).";;
+      esac
+  done
+fi
 
 ## set for non-interactive
 export DEBIAN_FRONTEND=noninteractive

@@ -1,0 +1,38 @@
+# gdb - setup.sh
+
+gdb config by manesec.
+
+## Features
+
++ support for pwndbg, gef, peda.
++ support tmux for pwndbg.
++ better color for gef.
++ GDB Enhanced Prompt.
++ [Experimental] support for ghidra decomplie (no support for root).
+
+## How to Install ?
+
+**Please make a backup copy of `.gdbinit` before running the script, it will overwrite your `.gdbinit`.**
+
+```
+wget https://github.com/manesec/tools4mane/raw/main/Config/gdb/setup.sh
+bash setup.sh
+```
+
+and wait.
+
+## Debug root program
+
+if you want to debug some root program, you can :
+
+```
+$ sudo gdbserver :1234 someprogram
+```
+
+and runas user:
+```
+$ gdb
+
+>>> target remote 127.0.0.1:1234
+>>> invoke-pwndbg
+```
