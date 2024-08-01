@@ -3,16 +3,16 @@
 #-- GDB env setup for manesec :P
 #-- Github: Tools4mane https://github.com/manesec/Tools4mane
 
-# 1. auto install pwndbg and gef
+# 1. auto install pwndbg, gef and peda
 # 2. pwndbg support for tmux
 # 3. better color for gef.
+# 4. install gep
 
-# type `gdb` and `invoke-pwndbg` to start pwndbg 
-# or `invoke-gef` to start gef
+## set for non-interactive
 export DEBIAN_FRONTEND=noninteractive
 
 ## make sure sudo command installed in the system
-need_package="sudo python3 python3-pip git wget gdb wget ipython3 tmux"
+need_package="sudo python3 python3-pip git wget gdb wget ipython3 tmux python3-six"
 
 if [ "$EUID" -eq 0 ] ; then
   echo "[*] Installing Base Packages ..."
@@ -44,6 +44,10 @@ echo "[*] Installing GEF ..."
 cd "$HOME/.gdb-plugins"
 wget -O "$HOME/.gdb-plugins/gef.py" https://raw.githubusercontent.com/hugsy/gef/main/gef.py
 
+echo "[*] Installing PEDA ..."
+cd "$HOME/.gdb-plugins"
+git clone https://github.com/punixcorn/peda.git  ~/.gdb-plugins/peda
+
 echo "[*] Installing splitmind for tmux support ..."
 cd "$HOME/.gdb-plugins"
 git clone https://github.com/jerdna-regeiz/splitmind splitmind
@@ -52,7 +56,7 @@ echo "[*] Installing dashboard ..."
 rm -f "$HOME/.gdbinit"
 wget -O "$HOME/.gdbinit" https://raw.githubusercontent.com/cyrus-and/gdb-dashboard/master/.gdbinit
 
-
+echo "[*] Writing config ..."
 cat  <<  EOF >> "$HOME/.gdbinit"
 
 echo \n=============================================================
@@ -66,6 +70,7 @@ define help-mane
 echo [*] Current Support Commands:  \n
 echo invoke-pwndbg -- Initializes PwnDBG. \n
 echo invoke-gef -- Initializes GEF. \n
+echo invoke-peda -- Initializes PEDA. \n
 echo toggle-eflags -- Toggle eflags helper. \n
 end
 document help-mane
@@ -158,14 +163,28 @@ end
 # invoke-gef
 define invoke-gef
 source ~/.gdb-plugins/gef.py
+tmux-setup
 end
 document invoke-gef
 Initializes GEF (GDB Enhanced Features)
 end
 
+# invoke-peda
+define invoke-peda
+source ~/.gdb-plugins/peda/peda.py
+end
+document invoke-peda
+Initializes PEDA - Python Exploit Development Assistance for GDB
+end
+
+# set disassembly-flavor
 set disassembly-flavor intel
 set disassemble-next-line off
 
 EOF
+
+echo "[*] Installing GEP for Enhanced Prompt ..."
+git clone --depth 1 https://github.com/lebr0nli/GEP.git ~/.gdb-plugins/GEP
+bash ~/.gdb-plugins/GEP/install.sh 
 
 echo "[!] DONE! start gdb and type 'help-mane' to get help."
