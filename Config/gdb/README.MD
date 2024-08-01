@@ -36,3 +36,16 @@ $ gdb
 >>> target remote 127.0.0.1:1234
 >>> invoke-pwndbg
 ```
+
+
+## Command
+
+```
+>>> help-mane
+[*] Current Support Commands:  
+invoke-pwndbg -- Initializes PwnDBG. 
+invoke-pwndbg-ghidra -- Initializes PwnDBG with ghidra decompile support. 
+invoke-gef -- Initializes GEF. 
+invoke-peda -- Initializes PEDA. 
+toggle-eflags -- Toggle eflags helper. 
+```
