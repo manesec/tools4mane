@@ -12,7 +12,7 @@ gdb config by manesec.
 
 ## How to Install ?
 
-**Please make a backup copy of `.gdbinit` before running the script, it will overwrite your `.gdbinit`.**
+**Please make a backup of `.gdbinit` before running the script, it will overwrite your `.gdbinit`.**
 
 ```
 wget https://github.com/manesec/tools4mane/raw/main/Config/gdb/setup.sh
