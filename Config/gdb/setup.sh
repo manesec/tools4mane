@@ -7,6 +7,20 @@
 # 2. pwndbg support for tmux
 # 3. better color for gef.
 # 4. install gep
+# 5. (optional) add support for ghidra
+
+## Vars
+support_ghidra=0
+
+## Asking for support ghidea
+while true; do
+    read -p "[Experimental] Do you want to support ghidra decomplie? (y/n): " answer
+    case $answer in
+        [Yy]* ) support_ghidra=1; break;;
+        [Nn]* ) support_ghidra=0; break;;
+        * ) echo "Please answer yes (y) or no (n).";;
+    esac
+done
 
 ## set for non-interactive
 export DEBIAN_FRONTEND=noninteractive
@@ -25,7 +39,7 @@ fi
 
 sudo pip3 install pygments
 
-# fix different python3 version
+## fix different python3 version
 echo "[*] Installing python3 for GDB ..."
 PYVER=$(gdb -batch -q --nx -ex 'pi import platform; print(".".join(platform.python_version_tuple()[:2]))')
 sudo apt install -y "python$PYVER-full"
@@ -56,8 +70,24 @@ echo "[*] Installing dashboard ..."
 rm -f "$HOME/.gdbinit"
 wget -O "$HOME/.gdbinit" https://raw.githubusercontent.com/cyrus-and/gdb-dashboard/master/.gdbinit
 
+## Support Ghidra
+if [ "$support_ghidra" -eq 1 ]; then
+  echo "[*] Installing ghidra ..."
+  sudo apt install -y ghidra
+  echo "[*] Installing radare2 ..."
+  sudo apt remove -y radare2
+  git clone https://github.com/radareorg/radare2 ~/.gdb-plugins/radare2
+  sudo bash ~/.gdb-plugins/radare2/sys/install.sh
+  echo "[*] Installing r2ghidra ..."
+  sudo r2pm -cig r2ghidra
+  echo "[*] Installing r2pipe for pwndbg ..."
+  bash -c 'source ~/.gdb-plugins/pwndbg/.venv/bin/activate ; pip3 install r2pipe'
+fi
+
+
+## Base config
 echo "[*] Writing config ..."
-cat  <<  EOF >> "$HOME/.gdbinit"
+cat  << EOF >> "$HOME/.gdbinit"
 
 echo \n=============================================================
 echo \n                 [[ tools4mane - by manesec ]]
@@ -69,6 +99,7 @@ echo \n=============================================================  \n\n
 define help-mane
 echo [*] Current Support Commands:  \n
 echo invoke-pwndbg -- Initializes PwnDBG. \n
+echo invoke-pwndbg-ghidra -- Initializes PwnDBG with ghidra decompile support. \n
 echo invoke-gef -- Initializes GEF. \n
 echo invoke-peda -- Initializes PEDA. \n
 echo toggle-eflags -- Toggle eflags helper. \n
@@ -187,6 +218,56 @@ set disassemble-next-line off
 
 EOF
 
+## Config for support ghidra
+if [ "$support_ghidra" -eq 1 ]; then
+cat  << EOF >> "$HOME/.gdbinit"
+# invoke-pwndbg-ghidra
+define invoke-pwndbg-ghidra
+source ~/.gdb-plugins/pwndbg/gdbinit.py
+source ~/.gdb-plugins/splitmind/gdbinit.py
+
+python
+import splitmind
+(splitmind.Mind()
+  .tell_splitter(show_titles=True)
+  .tell_splitter(set_title="Main")
+  .right(display="backtrace", size="25%")
+  .above(of="main",display="ghidra", size="80%", banner="top")
+  .tell_splitter(set_title='ghidra')
+  .right(display="disasm", size="60%", banner="top")
+  .show("code", on="disasm", banner="none")
+  .above(display="stack", size="35%")
+  .below(of="backtrace", cmd="ipython3", size="85%")
+  .above(display="legend", size="70%")
+  .show("regs", on="legend")
+).build(nobanner=True)
+end
+
+set context-ghidra if-no-source
+set context-clear-screen on
+set context-disasm-lines 15
+set context-stack-lines 10
+
+end
+document invoke-pwndbg-ghidra
+Initializes PwnDBG with ghidra decompile support.
+end
+
+EOF
+else
+cat  << EOF >> "$HOME/.gdbinit"
+# invoke-pwndbg-ghidra
+define invoke-pwndbg-ghidra
+echo No support, please re-run tools4mane install script. \n
+end
+document invoke-pwndbg-ghidra
+No support, please re-run tools4mane install script.
+end
+
+EOF
+fi
+
+## finally
 echo "[*] Installing GEP for Enhanced Prompt ..."
 git clone --depth 1 https://github.com/lebr0nli/GEP.git ~/.gdb-plugins/GEP
 bash ~/.gdb-plugins/GEP/install.sh 
