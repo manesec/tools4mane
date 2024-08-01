@@ -144,16 +144,20 @@ import splitmind
   .tell_splitter(show_titles=True)
   .tell_splitter(set_title="Main")
   .right(display="backtrace", size="25%")
-  .above(of="main", cmd='tty; tail -f /dev/null', clearing=False, display="Input / Output", size="80%", banner="top")
-  .tell_splitter(set_title='Input / Output')
-  .right(display="disasm", size="80%", banner="top")
+  #.above(of="main", cmd='tty; tail -f /dev/null', clearing=False, display="Input / Output", size="80%", banner="top")
+  #.tell_splitter(set_title='Input / Output')
+  .above(of="main",display="disasm", size="80%", banner="top")
   .show("code", on="disasm", banner="none")
   .above(display="stack", size="35%")
-  .below(of="backtrace", cmd="ipython3", size="85%")
+  .below(of="backtrace", cmd="ipython3", size="80%")
   .above(display="legend", size="70%")
   .show("regs", on="legend")
 ).build(nobanner=True)
 end
+
+set context-clear-screen on
+set context-disasm-lines 15
+set context-stack-lines 10
 
 end
 document invoke-pwndbg
