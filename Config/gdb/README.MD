@@ -2,6 +2,8 @@
 
 gdb config by manesec.
 
+**Note:** PLEASE use `tmux` to get a better experience.
+
 ## Features
 
 + support for pwndbg, gef, peda.
@@ -59,5 +61,5 @@ You can paste the code to terminal to quick fix it or install newer version of k
 
 ```bash
 PYVER=$(gdb -batch -q --nx -ex 'pi import platform; print(".".join(platform.python_version_tuple()[:2]))')
-python3.12 -m pip install r2pipe --break-system-packages
+"python$PYVER" -m pip install r2pipe --break-system-packages
 ```

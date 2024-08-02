@@ -104,6 +104,7 @@ echo invoke-pwndbg -- Initializes PwnDBG. \n
 echo invoke-pwndbg-ghidra -- Initializes PwnDBG with ghidra decompile support. \n
 echo invoke-gef -- Initializes GEF. \n
 echo invoke-peda -- Initializes PEDA. \n
+echo show-stack -- Show the stack about rsp and rbp. \n
 echo toggle-eflags -- Toggle eflags helper. \n
 end
 document help-mane
@@ -193,7 +194,7 @@ end
 
 end
 document show-stack
-show the stack about rsp and rbp.
+Show the stack about rsp and rbp.
 end
 
 # invoke-pwndbg
