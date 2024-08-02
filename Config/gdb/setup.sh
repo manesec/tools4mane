@@ -166,6 +166,36 @@ toggle-eflags 0  --  toggle CF
 toggle-eflags \$CF  --  toggle CF
 end
 
+# show-stack
+define show-stack
+
+set \$stacklength =  \$rbp - \$rsp
+
+printf "\$rbp: " 
+x/xg \$rbp
+printf "\$rsp: " 
+x/xg \$rsp
+printf " --> Stack Length = %d \n\n", \$stacklength
+
+hexdump \$rsp \$stacklength
+printf "                            ===============  rbp  ===============\n"
+hexdump \$rbp 64
+
+if (\$stacklength < 1000 ) && (\$stacklength > 0)
+    printf "\n[*] Stack for 64 value ... \n"
+    printf "==========================  rsp  =========================\n"
+    
+	set \$display64 = \$stacklength / 8
+	eval "x/%dxg \$rsp\n", \$display64
+    printf "==========================  rbp  =========================\n"
+    x/16xg \$rbp
+end
+
+end
+document show-stack
+show the stack about rsp and rbp.
+end
+
 # invoke-pwndbg
 define invoke-pwndbg
 source ~/.gdb-plugins/pwndbg/gdbinit.py
