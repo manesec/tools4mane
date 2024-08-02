@@ -171,6 +171,10 @@ define invoke-pwndbg
 source ~/.gdb-plugins/pwndbg/gdbinit.py
 source ~/.gdb-plugins/splitmind/gdbinit.py
 
+# set ida-enabled off
+# set ida-rpc-host 192.168.31.161
+# set ida-rpc-port 31337
+
 python
 import splitmind
 (splitmind.Mind()
@@ -227,6 +231,10 @@ cat  << EOF >> "$HOME/.gdbinit"
 define invoke-pwndbg-ghidra
 source ~/.gdb-plugins/pwndbg/gdbinit.py
 source ~/.gdb-plugins/splitmind/gdbinit.py
+
+# set ida-enabled off
+# set ida-rpc-host 192.168.31.161
+# set ida-rpc-port 31337
 
 python
 import splitmind
