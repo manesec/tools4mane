@@ -59,8 +59,8 @@ class autoLoadXMLRPC(idaapi.plugin_t):
         xmlclient.Marshaller.dispatch[int] = create_marshaller("<value><i8>%d</i8></value>")
         xmlclient.Marshaller.dispatch[idaapi.cfuncptr_t] = create_marshaller(just_to_str=True)
 
-        host = "0.0.0.0"
-        port = 31337
+        host = listen
+        port = listen_port
 
         mutex = threading.Condition()
 
