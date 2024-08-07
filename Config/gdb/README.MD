@@ -41,11 +41,6 @@ and wait.
 
 ![invoke-peda](img/invoke-peda.png)
 
-**invoke-peda-arm**
-
-![invoke-peda-arm](img/invoke-peda-arm.png)
-
-
 
 ## Support Command
 
@@ -56,8 +51,10 @@ invoke-pwndbg -- Initializes PwnDBG.
 invoke-pwndbg-ghidra -- Initializes PwnDBG with ghidra decompile support. 
 invoke-gef -- Initializes GEF. 
 invoke-peda -- Initializes PEDA. 
+invoke-peda-arm -- Initializes PEDA for arm. 
+invoke-peda-intel -- Initializes PEDA for intel. 
+show-stack -- Show the stack related rsp and rbp. 
 toggle-eflags -- Toggle eflags helper. 
-show-stack -- Show the stack about rsp and rbp.
 ```
 
 
@@ -90,4 +87,4 @@ $ gdb
 >>> invoke-pwndbg
 ```
 
-or using suid to some program.
+or using `suid` with some program.
