@@ -1,6 +1,6 @@
-# gdb - setup.sh
+# gdb - setup.sh script
 
-gdb config by manesec.
+Gdb setup config by [@manesec](https://github.com/manesec/).
 
 **Note:** PLEASE use `tmux` to get a better experience.
 
@@ -23,7 +23,58 @@ bash setup.sh
 
 and wait.
 
-## Debug root program
+## Screenshot
+
+**invoke-pwndbg**
+
+![invoke-pwndbg](img/invoke-pwndbg.png)
+
+**invoke-pwndbg-ghidra**
+
+![invoke-pwndbg-ghidra](img/invoke-pwndbg-ghidra.png)
+
+**invoke-gef**
+
+![invoke-gef](img/invoke-gef.png)
+
+**invoke-peda**
+
+![invoke-peda](img/invoke-peda.png)
+
+**invoke-peda-arm**
+
+![invoke-peda-arm](img/invoke-peda-arm.png)
+
+
+
+## Support Command
+
+```
+>>> help-mane
+[*] Current Support Commands:  
+invoke-pwndbg -- Initializes PwnDBG. 
+invoke-pwndbg-ghidra -- Initializes PwnDBG with ghidra decompile support. 
+invoke-gef -- Initializes GEF. 
+invoke-peda -- Initializes PEDA. 
+toggle-eflags -- Toggle eflags helper. 
+show-stack -- Show the stack about rsp and rbp.
+```
+
+
+## FAQ
+
+### Question: Ghidra did not show correctly
+
+If ghidra window show on GDB: `r2pipe or rzpipe not available, but required for r2/rz->ghidra bridge`, it mean some python version was different and library install incorrectly.
+
+You can paste the code to terminal to quick fix it or install newer version of kali.
+
+```bash
+PYVER=$(gdb -batch -q --nx -ex 'pi import platform; print(".".join(platform.python_version_tuple()[:2]))')
+"python$PYVER" -m pip install r2pipe --break-system-packages
+```
+
+### Question: How to debug root program
 
 if you want to debug some root program, you can :
 
@@ -39,27 +90,4 @@ $ gdb
 >>> invoke-pwndbg
 ```
 
-
-## Command
-
-```
->>> help-mane
-[*] Current Support Commands:  
-invoke-pwndbg -- Initializes PwnDBG. 
-invoke-pwndbg-ghidra -- Initializes PwnDBG with ghidra decompile support. 
-invoke-gef -- Initializes GEF. 
-invoke-peda -- Initializes PEDA. 
-toggle-eflags -- Toggle eflags helper. 
-```
-
-
-## FAQ
-
-If ghidra window show on GDB: `r2pipe or rzpipe not available, but required for r2/rz->ghidra bridge`, it mean some python version was different and library install incorrectly.
-
-You can paste the code to terminal to quick fix it or install newer version of kali.
-
-```bash
-PYVER=$(gdb -batch -q --nx -ex 'pi import platform; print(".".join(platform.python_version_tuple()[:2]))')
-"python$PYVER" -m pip install r2pipe --break-system-packages
-```
+or using suid to some program.

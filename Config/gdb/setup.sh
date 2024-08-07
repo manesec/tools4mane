@@ -46,9 +46,14 @@ echo "[*] Installing python3 for GDB ..."
 PYVER=$(gdb -batch -q --nx -ex 'pi import platform; print(".".join(platform.python_version_tuple()[:2]))')
 sudo apt install -y "python$PYVER-full"
 
+echo "[*] Backup config to $HOME/.gdbinit.bak"
+rm -rf "$HOME/.gdb-plugins"
 mkdir -p "$HOME/.gdb-plugins"
-cd "$HOME/.gdb-plugins"
-rm -f "$HOME/.gdbinit"
+mv -f "$HOME/.gdbinit" "$HOME/.gdbinit.bak" 2> /dev/null
+
+echo "[*] Installing GEP for Enhanced Prompt ..."
+git clone --depth 1 https://github.com/lebr0nli/GEP.git ~/.gdb-plugins/GEP
+bash ~/.gdb-plugins/GEP/install.sh 
 
 echo "[*] Installing pwndbg ..."
 cd "$HOME/.gdb-plugins"
@@ -64,13 +69,19 @@ echo "[*] Installing PEDA ..."
 cd "$HOME/.gdb-plugins"
 git clone https://github.com/punixcorn/peda.git  ~/.gdb-plugins/peda
 
+echo "[*] Installing PEDA ARM and INTEL..."
+cd "$HOME/.gdb-plugins"
+git clone https://github.com/alset0326/peda-arm  ~/.gdb-plugins/peda-arm
+
 echo "[*] Installing splitmind for tmux support ..."
 cd "$HOME/.gdb-plugins"
 git clone https://github.com/jerdna-regeiz/splitmind splitmind
 
 echo "[*] Installing dashboard ..."
-rm -f "$HOME/.gdbinit"
-wget -O "$HOME/.gdbinit" https://raw.githubusercontent.com/cyrus-and/gdb-dashboard/master/.gdbinit
+wget -O "$HOME/.gdb-plugins/dashboard.gdb" https://raw.githubusercontent.com/cyrus-and/gdb-dashboard/master/.gdbinit
+
+echo "[*] Cleanup All old config..."
+rm -f "$HOME/.gdbinit" 
 
 ## Support Ghidra
 if [ "$support_ghidra" -eq 1 ]; then
@@ -99,16 +110,18 @@ echo \n=============================================================  \n\n
 
 # help command
 define help-mane
-echo [*] Current Support Commands:  \n
-echo invoke-pwndbg -- Initializes PwnDBG. \n
-echo invoke-pwndbg-ghidra -- Initializes PwnDBG with ghidra decompile support. \n
-echo invoke-gef -- Initializes GEF. \n
-echo invoke-peda -- Initializes PEDA. \n
-echo show-stack -- Show the stack about rsp and rbp. \n
-echo toggle-eflags -- Toggle eflags helper. \n
+  echo [*] Current Support Commands:  \n
+  echo invoke-pwndbg -- Initializes PwnDBG. \n
+  echo invoke-pwndbg-ghidra -- Initializes PwnDBG with ghidra decompile support. \n
+  echo invoke-gef -- Initializes GEF. \n
+  echo invoke-peda -- Initializes PEDA. \n
+  echo invoke-peda-arm -- Initializes PEDA for arm. \n
+  echo invoke-peda-intel -- Initializes PEDA for intel. \n
+  echo show-stack -- Show the stack related rsp and rbp. \n
+  echo toggle-eflags -- Toggle eflags helper. \n
 end
 document help-mane
-Get help from tools4mane.
+  Get help from tools4mane.
 end
 
 # eflag command helper
@@ -121,86 +134,86 @@ set \$IF=9
 set \$DF=10
 set \$OF=11
 define toggle-eflags
-set \$CF=0
-set \$PF=2
-set \$AF=4
-set \$ZF=6
-set \$SF=7
-set \$IF=9
-set \$DF=10
-set \$OF=11
-if (\$arg0 == 0 )
-  set \$eflags ^= (1 << 0)
+  set \$CF=0
+  set \$PF=2
+  set \$AF=4
+  set \$ZF=6
+  set \$SF=7
+  set \$IF=9
+  set \$DF=10
+  set \$OF=11
+  if (\$arg0 == 0 )
+    set \$eflags ^= (1 << 0)
+  end
+  if (\$arg0 == 2 )
+    set \$eflags ^= (1 << 2)
+  end
+  if (\$arg0 == 4 )
+    set \$eflags ^= (1 << 4)
+  end
+  if (\$arg0 == 6 )
+    set \$eflags ^= (1 << 6)
+  end
+  if (\$arg0 == 7 )
+    set \$eflags ^= (1 << 7)
+  end
+  if (\$arg0 == 9 )
+    set \$eflags ^= (1 << 9)
+  end
+  if (\$arg0 == 10 )
+    set \$eflags ^= (1 << 10)
+  end 
+  if (\$arg0 == 11 )
+    set \$eflags ^= (1 << 11)
 end
-if (\$arg0 == 2 )
-  set \$eflags ^= (1 << 2)
-end
-if (\$arg0 == 4 )
-  set \$eflags ^= (1 << 4)
-end
-if (\$arg0 == 6 )
-  set \$eflags ^= (1 << 6)
-end
-if (\$arg0 == 7 )
-  set \$eflags ^= (1 << 7)
-end
-if (\$arg0 == 9 )
-  set \$eflags ^= (1 << 9)
-end
-if (\$arg0 == 10 )
-  set \$eflags ^= (1 << 10)
-end 
-if (\$arg0 == 11 )
-  set \$eflags ^= (1 << 11)
-end
-info registers eflags
+  info registers eflags
 end
 document toggle-eflags
-toggle-eflags < flag_number / flag_variable > -- used to toggle single eflags.
+  toggle-eflags < flag_number / flag_variable > -- used to toggle single eflags.
 
-flag_number: 
-\$CF = 0    \$PF = 2    \$AF = 4     \$ZF = 6
-\$SF = 7    \$IF = 9    \$DF = 10    \$OF = 11
+  flag_number: 
+  \$CF = 0    \$PF = 2    \$AF = 4     \$ZF = 6
+  \$SF = 7    \$IF = 9    \$DF = 10    \$OF = 11
 
-example:
-toggle-eflags 0  --  toggle CF
-toggle-eflags \$CF  --  toggle CF
+  example:
+  toggle-eflags 0  --  toggle CF
+  toggle-eflags \$CF  --  toggle CF
 end
 
 # show-stack
 define show-stack
+  set \$stacklength =  \$rbp - \$rsp
 
-set \$stacklength =  \$rbp - \$rsp
+  printf "\$rbp: " 
+  x/xg \$rbp
+  printf "\$rsp: " 
+  x/xg \$rsp
+  printf " --> Stack Length = %d \n\n", \$stacklength
 
-printf "\$rbp: " 
-x/xg \$rbp
-printf "\$rsp: " 
-x/xg \$rsp
-printf " --> Stack Length = %d \n\n", \$stacklength
+  hexdump \$rsp \$stacklength
+  printf "                            ===============  rbp  ===============\n"
+  hexdump \$rbp 64
 
-hexdump \$rsp \$stacklength
-printf "                            ===============  rbp  ===============\n"
-hexdump \$rbp 64
-
-if (\$stacklength < 1000 ) && (\$stacklength > 0)
-    printf "\n[*] Stack for 64 value ... \n"
-    printf "==========================  rsp  =========================\n"
-    
-	set \$display64 = \$stacklength / 8
-	eval "x/%dxg \$rsp\n", \$display64
-    printf "==========================  rbp  =========================\n"
-    x/16xg \$rbp
-end
-
+  if (\$stacklength < 1000 ) && (\$stacklength > 0)
+      printf "\n[*] Stack for 64 value ... \n"
+      printf "==========================  rsp  =========================\n"
+      
+    set \$display64 = \$stacklength / 8
+    eval "x/%dxg \$rsp\n", \$display64
+      printf "==========================  rbp  =========================\n"
+      x/16xg \$rbp
+  end
 end
 document show-stack
-Show the stack about rsp and rbp.
+  Show the stack related rsp and rbp.
 end
 
 # invoke-pwndbg
 define invoke-pwndbg
+source ~/.gdb-plugins/dashboard.gdb
 source ~/.gdb-plugins/pwndbg/gdbinit.py
 source ~/.gdb-plugins/splitmind/gdbinit.py
+source ~/.gdb-plugins/GEP/gdbinit-gep.py
 
 # set ida-enabled off
 # set ida-rpc-host 192.168.31.161
@@ -229,24 +242,46 @@ set context-stack-lines 10
 
 end
 document invoke-pwndbg
-Initializes PwnDBG
+  Initializes PwnDBG.
 end
 
 # invoke-gef
 define invoke-gef
-source ~/.gdb-plugins/gef.py
-tmux-setup
+  source ~/.gdb-plugins/dashboard.gdb
+  source ~/.gdb-plugins/gef.py
+  source ~/.gdb-plugins/GEP/gdbinit-gep.py
+  tmux-setup
 end
 document invoke-gef
-Initializes GEF (GDB Enhanced Features)
+  Initializes GEF (GDB Enhanced Features).
 end
 
 # invoke-peda
 define invoke-peda
-source ~/.gdb-plugins/peda/peda.py
+  source ~/.gdb-plugins/peda/peda.py
+  source ~/.gdb-plugins/GEP/gdbinit-gep.py
 end
 document invoke-peda
-Initializes PEDA - Python Exploit Development Assistance for GDB
+  Initializes PEDA - Python Exploit Development Assistance for GDB
+end
+
+
+# invoke-peda-arm
+define invoke-peda-arm
+  source ~/.gdb-plugins/peda-arm/peda-arm.py
+  source ~/.gdb-plugins/GEP/gdbinit-gep.py
+end
+document invoke-peda
+  Initializes PEDA for arm - Python Exploit Development Assistance for GDB
+end
+
+# invoke-peda-intel
+define invoke-peda-intel
+  source ~/.gdb-plugins/peda-arm/peda-intel.py
+  source ~/.gdb-plugins/GEP/gdbinit-gep.py
+end
+document invoke-peda
+  Initializes PEDA for intel- Python Exploit Development Assistance for GDB
 end
 
 # set disassembly-flavor
@@ -260,38 +295,40 @@ if [ "$support_ghidra" -eq 1 ]; then
 cat  << EOF >> "$HOME/.gdbinit"
 # invoke-pwndbg-ghidra
 define invoke-pwndbg-ghidra
-source ~/.gdb-plugins/pwndbg/gdbinit.py
-source ~/.gdb-plugins/splitmind/gdbinit.py
+  source ~/.gdb-plugins/dashboard.gdb
+  source ~/.gdb-plugins/pwndbg/gdbinit.py
+  source ~/.gdb-plugins/splitmind/gdbinit.py
+  source ~/.gdb-plugins/GEP/gdbinit-gep.py
 
-# set ida-enabled off
-# set ida-rpc-host 192.168.31.161
-# set ida-rpc-port 31337
+  # set ida-enabled off
+  # set ida-rpc-host 192.168.31.161
+  # set ida-rpc-port 31337
 
-python
-import splitmind
-(splitmind.Mind()
-  .tell_splitter(show_titles=True)
-  .tell_splitter(set_title="Main")
-  .right(display="backtrace", size="25%")
-  .above(of="main",display="ghidra", size="80%", banner="top")
-  .tell_splitter(set_title='ghidra')
-  .right(display="disasm", size="60%", banner="top")
-  .show("code", on="disasm", banner="none")
-  .above(display="stack", size="35%")
-  .below(of="backtrace", cmd="ipython3", size="85%")
-  .above(display="legend", size="70%")
-  .show("regs", on="legend")
-).build(nobanner=True)
-end
+  python
+  import splitmind
+  (splitmind.Mind()
+    .tell_splitter(show_titles=True)
+    .tell_splitter(set_title="Main")
+    .right(display="backtrace", size="25%")
+    .above(of="main",display="ghidra", size="80%", banner="top")
+    .tell_splitter(set_title='ghidra')
+    .right(display="disasm", size="60%", banner="top")
+    .show("code", on="disasm", banner="none")
+    .above(display="stack", size="35%")
+    .below(of="backtrace", cmd="ipython3", size="85%")
+    .above(display="legend", size="70%")
+    .show("regs", on="legend")
+  ).build(nobanner=True)
+  end
 
-set context-ghidra if-no-source
-set context-clear-screen on
-set context-disasm-lines 15
-set context-stack-lines 10
+  set context-ghidra if-no-source
+  set context-clear-screen on
+  set context-disasm-lines 15
+  set context-stack-lines 10
 
 end
 document invoke-pwndbg-ghidra
-Initializes PwnDBG with ghidra decompile support.
+  Initializes PwnDBG with ghidra decompile support.
 end
 
 EOF
@@ -299,18 +336,15 @@ else
 cat  << EOF >> "$HOME/.gdbinit"
 # invoke-pwndbg-ghidra
 define invoke-pwndbg-ghidra
-echo No support, please re-run tools4mane install script. \n
+  echo No support, please re-run tools4mane install script. \n
 end
 document invoke-pwndbg-ghidra
-No support, please re-run tools4mane install script.
+  No support, please re-run tools4mane install script.
 end
 
 EOF
 fi
 
 ## finally
-echo "[*] Installing GEP for Enhanced Prompt ..."
-git clone --depth 1 https://github.com/lebr0nli/GEP.git ~/.gdb-plugins/GEP
-bash ~/.gdb-plugins/GEP/install.sh 
 
 echo "[!] DONE! start gdb and type 'help-mane' to get help."
