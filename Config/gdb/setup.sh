@@ -28,7 +28,7 @@ fi
 export DEBIAN_FRONTEND=noninteractive
 
 ## make sure sudo command installed in the system
-need_package="sudo python3 python3-pip git wget gdb wget ipython3 tmux python3-six"
+need_package="sudo python3 python3-pip git wget gdb wget ipython3 tmux python3-six fzf"
 
 if [ "$EUID" -eq 0 ] ; then
   echo "[*] Installing Base Packages ..."
