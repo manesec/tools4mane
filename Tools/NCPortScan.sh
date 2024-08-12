@@ -27,7 +27,7 @@ then
     exit 0
 else
     echo "[+] Start to scanning $1 ..."
-    nc -nvz $1 1-65535 > /tmp/$1.mane 2>&1
+    nc -w 2 -nvz $1 1-65535 > /tmp/$1.mane 2>&1
 fi
 tac /tmp/$1.mane
 rm -rf /tmp/$1.mane
