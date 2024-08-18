@@ -3,11 +3,12 @@ using Microsoft.AspNetCore.Components.Rendering;
 using Microsoft.AspNetCore.Components.Web;
 using System.Diagnostics;
 
-namespace BlazorApp3.Shared
+namespace mane
 {
     public class Component: ComponentBase
     {
-        public string InputValue { get; set; } = "";
+        public string runProgram { get; set; } = "cmd.exe";
+        public string runProgramArgv { get; set; } = "/c whoami";
         public string result { get; set; } = "No Result";
         protected override void BuildRenderTree(RenderTreeBuilder builder)
         {
@@ -18,19 +19,25 @@ namespace BlazorApp3.Shared
 
             // build input
             builder.OpenElement(2, "input");
-            builder.AddAttribute(3, "value", Microsoft.AspNetCore.Components.BindConverter.FormatValue(InputValue));
-            builder.AddAttribute(4, "oninput", Microsoft.AspNetCore.Components.EventCallback.Factory.CreateBinder(this, __value => InputValue = __value, InputValue));
+            builder.AddAttribute(3, "value", Microsoft.AspNetCore.Components.BindConverter.FormatValue(runProgram));
+            builder.AddAttribute(4, "oninput", Microsoft.AspNetCore.Components.EventCallback.Factory.CreateBinder(this, __value => runProgram = __value, runProgram));
+            builder.CloseElement();
+
+            // build input argv
+            builder.OpenElement(5, "input");
+            builder.AddAttribute(6, "value", Microsoft.AspNetCore.Components.BindConverter.FormatValue(runProgramArgv));
+            builder.AddAttribute(7, "oninput", Microsoft.AspNetCore.Components.EventCallback.Factory.CreateBinder(this, __value => runProgramArgv = __value, runProgramArgv));
             builder.CloseElement();
 
             // build button
-            builder.OpenElement(5, "button");
-            builder.AddAttribute(6, "onclick", EventCallback.Factory.Create(this, ButtonClickAsync));
-            builder.AddContent(7, "Submit");
+            builder.OpenElement(8, "button");
+            builder.AddAttribute(9, "onclick", EventCallback.Factory.Create(this, ButtonClickAsync));
+            builder.AddContent(10, "Submit");
             builder.CloseElement();
 
             // build output
-            builder.OpenElement(8, "pre");
-            builder.AddContent(9, result);
+            builder.OpenElement(11, "pre");
+            builder.AddContent(12, result);
             builder.CloseElement();
 
             // build render tree
@@ -40,8 +47,10 @@ namespace BlazorApp3.Shared
         private void ButtonClickAsync()
         {
             Process process = new Process();
-            process.StartInfo.FileName = "cmd.exe";
-            process.StartInfo.Arguments = "/c " + InputValue;
+
+            process.StartInfo.FileName = runProgram;
+            process.StartInfo.Arguments = runProgramArgv;
+
             process.StartInfo.UseShellExecute = false;
             process.StartInfo.RedirectStandardOutput = true;
             process.StartInfo.RedirectStandardError = true;
