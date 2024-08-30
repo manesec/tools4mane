@@ -92,6 +92,7 @@ if [ "$support_ghidra" -eq 1 ]; then
   git clone https://github.com/radareorg/radare2 ~/.gdb-plugins/radare2
   sudo bash ~/.gdb-plugins/radare2/sys/install.sh
   echo "[*] Installing r2ghidra ..."
+  sudo r2pm -U
   sudo r2pm -cig r2ghidra
   echo "[*] Installing r2pipe for pwndbg ..."
   bash -c "source ~/.gdb-plugins/pwndbg/.venv/bin/activate ; python$PYVER -m pip install r2pipe"
