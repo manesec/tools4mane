@@ -305,22 +305,22 @@ define invoke-pwndbg-ghidra
   # set ida-rpc-host 192.168.31.161
   # set ida-rpc-port 31337
 
-  python
-  import splitmind
-  (splitmind.Mind()
-    .tell_splitter(show_titles=True)
-    .tell_splitter(set_title="Main")
-    .right(display="backtrace", size="25%")
-    .above(of="main",display="ghidra", size="80%", banner="top")
-    .tell_splitter(set_title='ghidra')
-    .right(display="disasm", size="60%", banner="top")
-    .show("code", on="disasm", banner="none")
-    .above(display="stack", size="35%")
-    .below(of="backtrace", cmd="ipython3", size="85%")
-    .above(display="legend", size="70%")
-    .show("regs", on="legend")
-  ).build(nobanner=True)
-  end
+python
+import splitmind
+(splitmind.Mind()
+  .tell_splitter(show_titles=True)
+  .tell_splitter(set_title="Main")
+  .right(display="backtrace", size="25%")
+  .above(of="main",display="ghidra", size="80%", banner="top")
+  .tell_splitter(set_title='ghidra')
+  .right(display="disasm", size="60%", banner="top")
+  .show("code", on="disasm", banner="none")
+  .above(display="stack", size="35%")
+  .below(of="backtrace", cmd="ipython3", size="85%")
+  .above(display="legend", size="70%")
+  .show("regs", on="legend")
+).build(nobanner=True)
+end
 
   set context-ghidra if-no-source
   set context-clear-screen on
