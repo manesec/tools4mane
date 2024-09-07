@@ -36,10 +36,10 @@ rem webserver files
 set searchExt=%searchExt% asp aspx php php3 php4 php5 php7 php8 pht phar phpt pgif phtml phtm jsp cgi py html js css pl jar war swf
 
 rem databases files
-set searchExt=%searchExt% db db3 sql mdb sqlite
+set searchExt=%searchExt% db db3 sql mdb sqlite 
 
 rem config files
-set searchExt=%searchExt% conf ini config xml json yml yaml
+set searchExt=%searchExt% conf ini config xml json yml yaml inf
 
 rem shell script
 set searchExt=%searchExt% sh bat ps1 rb 
@@ -48,10 +48,10 @@ rem hidden files
 set searchExt=%searchExt% htaccess htpasswd properties env 
 
 rem cert files
-set searchExt=%searchExt% pem crt key 
+set searchExt=%searchExt% pem crt key kdb kdbx ccache
 
 rem backup files
-set searchExt=%searchExt% bak old swp swp backup
+set searchExt=%searchExt% bak old swp swp backup hive dit
 
 rem project files
 set searchExt=%searchExt% sln cs csproj vb vbproj java class
@@ -96,7 +96,7 @@ call :clearzerokb
 echo [*] Grep with the keywords ...
 
 
-set searchExt=asp aspx php php3 php4 php5 php7 php8 pht phar phpt pgif phtml phtm jsp cgi py pl md sql mdb conf ini config xml json yml yaml sh bat ps1 rb log js
+set searchExt=asp aspx php php3 php4 php5 php7 php8 pht phar phpt pgif phtml phtm jsp cgi py pl md sql mdb conf ini config txt xml json yml yaml sh bat ps1 rb log js inf
 set allExt=
 for %%i in (%searchExt%) do (
     set allExt=!allExt! -e %%i
@@ -109,6 +109,14 @@ for %%k in (%keyWords%) do (
 )
 
 call :clearzerokb
+
+rem ======================  grep with filename  ======================
+echo [*] Grep Filename ...
+rg.exe "history" "%outputDir%\raw\all_extension_file.txt" > "%outputDir%\analysis\history.txt"
+
+
+
+
 
 rem ======================  All all file into foutput.7z  ======================
 call :clearzerokb
@@ -149,8 +157,8 @@ fd.exe -a -t f -e txt . "%outputDir%" > "%outputDir%\tmp\sort_tmp.txt"
 set "command_file=%outputDir%\tmp\sort_tmp.txt"
 for /f "usebackq delims=" %%a in ("%command_file%") do (
     sort < "%%a" > "%%a.tmp"
-	del "%%a"
-	move "%%a.tmp" "%%a"
+	del /Y "%%a" >nul
+	move /Y "%%a.tmp" "%%a" >nul
 )
 
 exit /b
