@@ -343,6 +343,10 @@ wilder.set_option('renderer', wilder.popupmenu_renderer(
 
 -- COQ Config
 vim.g.coq_settings = {
+  keymap = {
+    recommended = false,
+    jump_to_mark = '<c-s>'
+  },
   auto_start = 'shut-up',
   ["display.icons.mode"] = 'none',
   ["limits.completion_auto_timeout"] = 0.2,
