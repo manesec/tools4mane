@@ -216,9 +216,9 @@ source ~/.gdb-plugins/pwndbg/gdbinit.py
 source ~/.gdb-plugins/splitmind/gdbinit.py
 source ~/.gdb-plugins/GEP/gdbinit-gep.py
 
-# set ida-enabled off
-# set ida-rpc-host 192.168.31.161
-# set ida-rpc-port 31337
+#set integration-provider ida                                                                                                                                                                                     
+#set ida-rpc-host 192.168.31.162
+#set ida-rpc-port 31337                                                                                                                                                                                          
 
 python
 import splitmind
@@ -301,9 +301,9 @@ define invoke-pwndbg-ghidra
   source ~/.gdb-plugins/splitmind/gdbinit.py
   source ~/.gdb-plugins/GEP/gdbinit-gep.py
 
-  # set ida-enabled off
-  # set ida-rpc-host 192.168.31.161
-  # set ida-rpc-port 31337
+#set integration-provider ida                                                                                                                                                                                     
+#set ida-rpc-host 192.168.31.162
+#set ida-rpc-port 31337                                                                                                                                                                                          
 
 python
 import splitmind
