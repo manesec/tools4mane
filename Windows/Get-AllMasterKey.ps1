@@ -1,16 +1,20 @@
-
-$users = Get-ChildItem "C:\Users"
+$searchDir = "C:\Users"
+$users = Get-ChildItem $searchDir
 foreach ($user in $users) {
-    " ========== $user =========" ;
-    $folders = Get-ChildItem -Directory -force "C:\Users\$user\AppData\Roaming\Microsoft\Protect\" -ErrorAction SilentlyContinue; 
+    " ========== $user - Master Key =========" ;
+    $folders = Get-ChildItem -Directory -force "$searchDir\$user\AppData\Roaming\Microsoft\Protect\" -ErrorAction SilentlyContinue; 
 	foreach ($folder in $folders) {
-		"C:\Users\$user\AppData\Roaming\Microsoft\Protect\$folder"
-		Get-ChildItem -force "C:\Users\$user\AppData\Roaming\Microsoft\Protect\$folder" -ErrorAction SilentlyContinue | foreach {$_.Fullname}
+		"$searchDir\$user\AppData\Roaming\Microsoft\Protect\$folder"
+		Get-ChildItem -force "$searchDir\$user\AppData\Roaming\Microsoft\Protect\$folder" -ErrorAction SilentlyContinue | foreach {$_.Fullname}
 	}
 	
-	$folders = Get-ChildItem -Directory -force "C:\Users\$user\AppData\Local\Microsoft\Protect\" -ErrorAction SilentlyContinue
+	$folders = Get-ChildItem -Directory -force "$searchDir\$user\AppData\Local\Microsoft\Protect\" -ErrorAction SilentlyContinue
 	foreach ($folder in $folders) {
-		"C:\Users\$user\AppData\Local\Microsoft\Protect\$folder"
-		Get-ChildItem -force "C:\Users\$user\AppData\Local\Microsoft\Protect\$folder" -ErrorAction SilentlyContinue | foreach {$_.Fullname}
+		"$searchDir\$user\AppData\Local\Microsoft\Protect\$folder"
+		Get-ChildItem -force "$searchDir\$user\AppData\Local\Microsoft\Protect\$folder" -ErrorAction SilentlyContinue | foreach {$_.Fullname}
 	}
+	
+    " ========== $user - Secret =========" ;
+	Get-ChildItem -force "$searchDir\$user\AppData\Roaming\Microsoft\Credentials" -ErrorAction SilentlyContinue | foreach {$_.Fullname}	
+	
 }
