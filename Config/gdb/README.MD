@@ -3,6 +3,7 @@
 Gdb setup config by [@manesec](https://github.com/manesec/).
 
 **Note:** PLEASE use `tmux` to get a better experience.
+**Note:** It only work for new version of kali linux.
 
 ## Features
 

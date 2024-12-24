@@ -39,7 +39,7 @@ else
   sudo DEBIAN_FRONTEND=noninteractive apt install -y $need_package
 fi
 
-sudo pip3 install pygments
+sudo pip3 install pygments --break-system-packages
 
 ## fix different python3 version
 echo "[*] Installing python3 for GDB ..."
