@@ -32,10 +32,8 @@ executor = ThreadPoolExecutor(max_workers=50)
 all_task = []
 
 def query_sql(sql):
-    ch = [x for x in range(48,58)]
-    ch.extend([x for x in range(65,91)])
-    ch.extend([x for x in range(97,123)])
-    print(ch)
+    ch = [x for x in range(33,127)]
+
     guessed_str  = ""
     for index in range(1,100):
         founded = False
