@@ -99,6 +99,12 @@ netexec ldap $ip -u "$username" -p "$password" --query "(userAccountControl:1.2.
 echo -e '\n[*] Enum msds-allowedtodelegateto / Get-netUser -TrustedToAuth ...'
 netexec ldap $ip -u "$username" -p "$password" --query "(msds-allowedtodelegateto=*)" "sAMAccountName"
 
+echo -e '\n[*] Enum user account requires a smart card...'
+netexec ldap $ip -u "$username" -p "$password" --query "(useraccountcontrol:1.2.840.113556.1.4.803:=262144)" "sAMAccountName"
+
+echo -e '\n[*] Enum user has ENCRYPTED_TEXT_PWD_ALLOWED'
+netexec ldap $ip -u "$username" -p "$password" --query "(useraccountcontrol:1.2.840.113556.1.4.803:=128)" "sAMAccountName"
+
 echo -e '\n[*] Enum adminCount = 1'
 netexec ldap $ip -u "$username" -p "$password" --query "(adminCount=1)" "sAMAccountName"
 
@@ -129,7 +135,10 @@ netexec ldap $ip -u "$username" -p "$password" -M obsolete
 echo -e "\n[*] pso via ldap ..." 
 netexec ldap $ip -u "$username" -p "$password" -M pso 
 
-echo -e "\n[*] subnets via ldap ..." 
+echo "Note: pso module for netexec may have some bug."
+echo "Try: $ python3 ldapsearch-ad.py -l $ip -d domain.com -u $username -p $password  -t pass-pols"
+
+echo -e "\n\n[*] subnets via ldap ..." 
 netexec ldap $ip -u "$username" -p "$password" -M subnets 
 
 echo -e "\n[*] user-desc via ldap ..." 
@@ -154,7 +163,6 @@ netexec ldap $ip -u "$username" -p "$password" --query  "(objectClass=group)" "s
 
 if [[ -n "$password" ]]; then
 	echo -e "[~] No need to brute rid for null session"
-
 else
 	echo -e "\n[*] Rid brute via null session(limit to 10000)..." 
 	netexec smb $ip -u '' -p '' --rid-brute 10000 
