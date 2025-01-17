@@ -20,6 +20,12 @@ if [[ -n "$password" ]]; then
 	netexec rdp $ip -u "$username" -p "$password"    
 	netexec mssql $ip -u "$username" -p "$password"  
 
+	echo -e "\n[*] checking current user (local-auth) smb/winrm/rdp/mssql permission ... " 
+	netexec rdp $ip -u "$username" -p "$password"   --local-auth
+	netexec winrm $ip -u "$username" -p "$password"  --local-auth
+	netexec smb $ip -u "$username" -p "$password"  --local-auth
+	netexec mssql $ip -u "$username" -p "$password"  --local-auth
+
 	echo -e "\n[*] Enum smb share folder ..." 
 	netexec smb $ip -u "$username" -p "$password" --shares 
 	
@@ -80,6 +86,15 @@ netexec smb $ip -u "$username" -p "$password" -M wcc
 echo -e "\n[*] Enum ADCS ..." 
 netexec ldap $ip -u "$username" -p "$password" -M adcs 
 netexec smb $ip -u "$username" -p "$password" -M enum_ca 
+
+echo -e "\n[*] Enum loggedon-users"
+netexec smb $ip -u "$username" -p "$password" --loggedon-users
+
+echo -e "\n[*] Enum sessions"
+netexec smb $ip -u "$username" -p "$password" --sessions
+
+echo -e "\n[*] Enum computers via smb"
+netexec smb $ip -u "$username" -p "$password" --computers
 
 echo -e "\n[*] Enum enum_trusts ..." 
 netexec ldap $ip -u "$username" -p "$password" -M enum_trusts 
@@ -143,6 +158,7 @@ netexec ldap $ip -u "$username" -p "$password" -M subnets
 
 echo -e "\n[*] user-desc via ldap ..." 
 netexec ldap $ip -u "$username" -p "$password" -M user-desc 
+echo "[!] Pleace check the log file will have more information."
 
 echo -e "\n[*] DC List via ldap ..."
 netexec ldap $ip -u "$username" -p "$password" --dc-list
