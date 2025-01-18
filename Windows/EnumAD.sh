@@ -7,24 +7,28 @@ echo -e "=== enum4linux ==="
 enum4linux -a -A -u "$username" -p "$password" "$ip" 
 
 # netexec 
-echo -e "=== NETEXEC ==="
+echo -e "\n=== NETEXEC ==="
 
 echo -e "\n[*] Enum smb with netexec (null session)..." 
 netexec smb $ip -u '' -p '' --shares 
 netexec smb $ip -u 'guest' -p '' --shares 
 
 if [[ -n "$password" ]]; then
-	echo -e "\n[*] checking current user smb/winrm/rdp/mssql permission ... " 
-	netexec smb $ip -u "$username" -p "$password"   
-	netexec winrm $ip -u "$username" -p "$password"  
+	echo -e "\n[*] Checking current user smb/winrm/rdp/mssql permission ... " 
+	netexec smb $ip -u "$username" -p "$password" 
+	netexec wmi $ip -u "$username" -p "$password" 
+	netexec winrm $ip -u "$username" -p "$password" 
 	netexec rdp $ip -u "$username" -p "$password"    
-	netexec mssql $ip -u "$username" -p "$password"  
+	netexec mssql $ip -u "$username" -p "$password" -M mssql_priv
 
-	echo -e "\n[*] checking current user (local-auth) smb/winrm/rdp/mssql permission ... " 
+	echo -e "\n[*] Checking current user (local-auth) smb/winrm/rdp/mssql permission ... " 
 	netexec rdp $ip -u "$username" -p "$password"   --local-auth
 	netexec winrm $ip -u "$username" -p "$password"  --local-auth
 	netexec smb $ip -u "$username" -p "$password"  --local-auth
-	netexec mssql $ip -u "$username" -p "$password"  --local-auth
+	netexec mssql $ip -u "$username" -p "$password"  --local-auth  -M mssql_priv
+
+	echo -e "\n[*] Current user groups"
+	netexec ldap $ip -u "$username" -p "$password" -M groupmembership -o USER="$username"
 
 	echo -e "\n[*] Enum smb share folder ..." 
 	netexec smb $ip -u "$username" -p "$password" --shares 
@@ -50,7 +54,7 @@ if [[ -n "$password" ]]; then
 
 	echo -e "\n[*] ldap-checker via ldap ..." 
 	netexec ldap $ip -u "$username" -p "$password" -M ldap-checker 
-	
+
 	echo -e "\n[*] Attack : webdav ..." 
 	netexec smb $ip -u "$username" -p "$password" -M webdav 
 	
@@ -90,6 +94,9 @@ netexec smb $ip -u "$username" -p "$password" -M enum_ca
 echo -e "\n[*] Enum loggedon-users"
 netexec smb $ip -u "$username" -p "$password" --loggedon-users
 
+echo -e "\n[*] Enum domain-sid"
+netexec smb $ip -u "$username" -p "$password" --get-sid
+
 echo -e "\n[*] Enum sessions"
 netexec smb $ip -u "$username" -p "$password" --sessions
 
@@ -122,6 +129,7 @@ netexec ldap $ip -u "$username" -p "$password" --query "(useraccountcontrol:1.2.
 
 echo -e '\n[*] Enum adminCount = 1'
 netexec ldap $ip -u "$username" -p "$password" --query "(adminCount=1)" "sAMAccountName"
+# netexec ldap $ip -u "$username" -p "$password" --admin-count
 
 echo -e '\n[*] Enum DoesNotRequirePreAuth & adminCount = 1'
 netexec ldap $ip -u "$username" -p "$password" --query "(&(objectClass=user)(userAccountControl:1.2.840.113556.1.4.803:=4194304)(adminCount=1))" "sAMAccountName"
@@ -163,7 +171,11 @@ echo "[!] Pleace check the log file will have more information."
 echo -e "\n[*] DC List via ldap ..."
 netexec ldap $ip -u "$username" -p "$password" --dc-list
 
-echo -e "=== NETEXEC : More General enumlation ==="
+echo -e "\n[*] get-network via ldap ..."
+netexec ldap $ip -u "$username" -p "$password" -M get-network -o ALL=true
+
+
+echo -e "\n=== NETEXEC : More General enumlation ==="
 
 echo -e "\n[*] Enum active user via ldap ..."
 netexec ldap $ip -u "$username" -p "$password" --query  "(&(objectCategory=person)(objectClass=user)(!(userAccountControl:1.2.840.113556.1.4.803:=2)))" "sAMAccountName description" 
@@ -177,8 +189,11 @@ netexec ldap $ip -u "$username" -p "$password" --query  "(objectClass=user)" "sA
 echo -e "\n[*] Enum all groups via ldap "
 netexec ldap $ip -u "$username" -p "$password" --query  "(objectClass=group)" "sAMAccountName description" 
 
+# echo -e "\n[*] Enum user & groups via ldap in netexec way (May have bug for null session)"
+# netexec ldap $ip -u "$username" -p "$password" --users --groups
+
 if [[ -n "$password" ]]; then
-	echo -e "[~] No need to brute rid for null session"
+	echo -e "\n [~] No need to brute rid for null session"
 else
 	echo -e "\n[*] Rid brute via null session(limit to 10000)..." 
 	netexec smb $ip -u '' -p '' --rid-brute 10000 
@@ -188,4 +203,11 @@ else
 
 	echo -e "\n[*] Enum user via ldap (null session)..." 
 	netexec ldap $ip -u '' -p '' --users 
+fi
+
+echo -e "\n=== NETEXEC : POST explotion TEST ===="
+
+if [[ -n "$password" ]]; then
+	echo -e "\n[*] keepass discover ..."
+	netexec smb $ip -u "$username" -p "$password" -M keepass_discover
 fi
