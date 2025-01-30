@@ -187,6 +187,9 @@ netexec ldap $ip -u "$username" -p "$password" -M get-network -o ALL=true
 if [[ -n "$password" ]]; then
 	echo -e "\n=== Powerview.py ==="
 
+	echo -e "\n[*] Logon script on ldap"
+	powerview "$username":"$password"@$ip -q 'Get-DomainObject -Where "scriptPath not null" -Select sAMAccountName,lastLogon,lastLogonTimestamp,logonCount,scriptPath -TableView'
+
 	echo -e "\n[*] Who can write SPN ?"
 	powerview "$username":"$password"@$ip -q 'Get-DomainObjectAcl -ResolveGUIDs -Where "ObjectAceType match Service-Principal-Name" -Select ObjectDN,AccessMask,SecurityIdentifier -TableView'
 
