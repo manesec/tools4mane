@@ -1,6 +1,15 @@
+#! /bin/bash
 ip="10.129.42.188"
 username=""
 password=""
+
+# Usage: sudo apt-get install expect-dev 
+# arch: sudo pacman -Syy install expect
+# unbuffer bash EnumAD.sh | tee output.log
+# less -r output.log
+
+# Require: netexec, powerview.py, enum4linux
+
 
 # enum4linux
 echo -e "=== enum4linux ==="
@@ -95,7 +104,7 @@ echo -e "\n[*] Enum loggedon-users"
 netexec smb $ip -u "$username" -p "$password" --loggedon-users
 
 echo -e "\n[*] Enum domain-sid"
-netexec smb $ip -u "$username" -p "$password" --get-sid
+netexec ldap $ip -u "$username" -p "$password" --get-sid
 
 echo -e "\n[*] Enum sessions"
 netexec smb $ip -u "$username" -p "$password" --sessions
@@ -174,6 +183,28 @@ netexec ldap $ip -u "$username" -p "$password" --dc-list
 echo -e "\n[*] get-network via ldap ..."
 netexec ldap $ip -u "$username" -p "$password" -M get-network -o ALL=true
 
+
+if [[ -n "$password" ]]; then
+	echo -e "\n=== Powerview.py ==="
+
+	echo -e "\n[*] Who can write SPN ?"
+	powerview "$username":"$password"@$ip -q 'Get-DomainObjectAcl -ResolveGUIDs -Where "ObjectAceType match Service-Principal-Name" -Select ObjectDN,AccessMask,SecurityIdentifier -TableView'
+
+	echo -e "\n[*] Who can create GPO ?"
+	powerview "$username":"$password"@$ip -q 'Get-DomainObjectAcl -Identity "Policies" -Where "AccessMask contain CreateChild" -Select SecurityIdentifier'
+
+	echo -e "\n[*] Who can modify GPO ?"
+	command_output=$(powerview "$username":"$password"@"$ip" -q 'Get-DomainGPO -Select cn' --no-admin-check --no-cache | grep '^{')
+	echo "$command_output" | while IFS= read -r line; do
+		echo "[GPO]: $line"
+		powerview "$username":"$password"@"$ip" -q "Get-DomainObjectAcl -Identity $line -Select ActiveDirectoryRights,SecurityIdentifier -ResolveGUIDs -TableView"
+	done
+
+	echo -e "\n[*] Who can link GPO for Domain or OU?"
+	powerview "$username":"$password"@"$ip" -q "Get-DomainObjectAcl -ResolveGUIDs -Where 'ObjectAceType match GP-Link' -NoCache -Select ObjectDN,AccessMask,SecurityIdentifier -TableView"
+	echo -e "\n[!] Powerview.py DO NOT support to enum all sites. Use powershell of Get-GPOEnumeration.ps1 instead."
+
+fi
 
 echo -e "\n=== NETEXEC : More General enumlation ==="
 
