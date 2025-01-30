@@ -205,7 +205,13 @@ if [[ -n "$password" ]]; then
 
 	echo -e "\n[*] Who can link GPO for Domain or OU?"
 	powerview "$username":"$password"@"$ip" -q "Get-DomainObjectAcl -ResolveGUIDs -Where 'ObjectAceType match GP-Link' -NoCache -Select ObjectDN,AccessMask,SecurityIdentifier -TableView"
-	echo -e "\n[!] Powerview.py DO NOT support to enum all sites. Use powershell of Get-GPOEnumeration.ps1 instead."
+
+	ehco -e "\n[*] Who can modify GPO for site?"
+	command_output=$(powerview "$username":"$password"@"$ip" -q 'Get-Domain -Select subRefs' | grep "CN=Configuration,")
+	echo "$command_output" | while IFS= read -r line; do
+		echo "[SearchBase]: CN=Sites,$line"
+		powerview "$username":"$password"@"$ip" -q "Get-DomainObjectAcl  -SearchBase \"CN=Sites,$line\" -ResolveGUIDs -TableView -Select ObjectDN,ActiveDirectoryRights,SecurityIdentifier"
+	done
 
 fi
 
