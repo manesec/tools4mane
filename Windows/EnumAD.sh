@@ -183,11 +183,14 @@ netexec ldap $ip -u "$username" -p "$password" --query  "(&(objectCategory=perso
 echo -e "\n[*] Enum disable user via ldap ..."
 netexec ldap $ip -u "$username" -p "$password" --query  "(&(objectCategory=person)(objectClass=user)(userAccountControl:1.2.840.113556.1.4.803:=2))" "sAMAccountName description" 
 
-echo -e "\n[*] Enum all user via ldap "
+echo -e "\n[*] Enum all users via ldap "
 netexec ldap $ip -u "$username" -p "$password" --query  "(objectClass=user)" "sAMAccountName description"
 
 echo -e "\n[*] Enum all groups via ldap "
 netexec ldap $ip -u "$username" -p "$password" --query  "(objectClass=group)" "sAMAccountName description" 
+
+echo -e "\n[*] Enum all computers via ldap"
+netexec ldap $ip -u "$username" -p "$password" --query  "(objectCategory=computer)" "sAMAccountName description" 
 
 # echo -e "\n[*] Enum user & groups via ldap in netexec way (May have bug for null session)"
 # netexec ldap $ip -u "$username" -p "$password" --users --groups
