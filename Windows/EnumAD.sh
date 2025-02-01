@@ -197,7 +197,7 @@ if [[ -n "$password" ]]; then
 	powerview "$username":"$password"@$ip -q 'Get-DomainObjectAcl -Identity "Policies" -Where "AccessMask contain CreateChild" -Select SecurityIdentifier'
 
 	echo -e "\n[*] Who can modify GPO ?"
-	command_output=$(powerview "$username":"$password"@"$ip" -q 'Get-DomainGPO -Select cn' --no-admin-check --no-cache | grep '^{')
+	command_output=$(powerview "$username":"$password"@"$ip" -q 'Get-DomainGPO -Properties cn' --no-admin-check --no-cache | grep '^{')
 	echo "$command_output" | while IFS= read -r line; do
 		echo "[GPO]: $line"
 		powerview "$username":"$password"@"$ip" -q "Get-DomainObjectAcl -Identity $line -Select ActiveDirectoryRights,SecurityIdentifier -ResolveGUIDs -TableView"
@@ -207,11 +207,14 @@ if [[ -n "$password" ]]; then
 	powerview "$username":"$password"@"$ip" -q "Get-DomainObjectAcl -ResolveGUIDs -Where 'ObjectAceType match GP-Link' -NoCache -Select ObjectDN,AccessMask,SecurityIdentifier -TableView"
 
 	ehco -e "\n[*] Who can modify GPO for site?"
-	command_output=$(powerview "$username":"$password"@"$ip" -q 'Get-Domain -Select subRefs' | grep "CN=Configuration,")
+	command_output=$(powerview "$username":"$password"@"$ip" -q 'Get-Domain -Properties subRefs' | grep "CN=Configuration,")
 	echo "$command_output" | while IFS= read -r line; do
 		echo "[SearchBase]: CN=Sites,$line"
 		powerview "$username":"$password"@"$ip" -q "Get-DomainObjectAcl  -SearchBase \"CN=Sites,$line\" -ResolveGUIDs -TableView -Select ObjectDN,ActiveDirectoryRights,SecurityIdentifier"
 	done
+
+	echo -e "\n[*] Last Logon user ..."
+	powerview "$username":"$password"@"$ip" -q 'Get-DomainObject -Select sAMAccountName,lastLogon,lastLogonTimestamp,logonCount,scriptPath -Where "lastLogon not null" -TableView'
 
 fi
 
