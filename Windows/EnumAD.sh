@@ -167,6 +167,9 @@ netexec ldap $ip -u "$username" -p "$password" -M obsolete
 echo -e "\n[*] pso via ldap ..." 
 netexec ldap $ip -u "$username" -p "$password" -M pso 
 
+echo -e "\n[*] sccm via ldap ..." 
+netexec ldap $ip -u "$username" -p "$password" -M sccm
+
 echo "Note: pso module for netexec may have some bug."
 echo "Try: $ python3 ldapsearch-ad.py -l $ip -d domain.com -u $username -p $password  -t pass-pols"
 
