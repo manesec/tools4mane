@@ -77,7 +77,7 @@ netexec smb $ip -u "$username" -p "$password" -M nopac
 echo -e "\n[*] Attack : spooler ..." 
 netexec smb $ip -u "$username" -p "$password" -M spooler 
 
-echo -e "\n[*] Attack: coerce_plus  ..." 
+echo -e "\n[*] Attack: coerce_plus ..." 
 netexec smb $ip -u "$username" -p "$password" -M coerce_plus
 
 echo -e "\n[*] Attack : zerologon (may take 1 minute to complete) ..." 
