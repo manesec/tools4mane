@@ -52,8 +52,8 @@ if [[ -n "$password" ]]; then
 	echo -e "\n[*] Enum gmsa password ..." 
 	netexec ldap $ip -u "$username" -p "$password" --gmsa 
 	
-	echo -e "\n[*] Bloodhound collecting ..." 
-	netexec ldap $ip -u "$username" -p "$password" --bloodhound -c all 
+	# echo -e "\n[*] Bloodhound collecting ..." 
+	# netexec ldap $ip -u "$username" -p "$password" --bloodhound -c all 
 	
 	echo -e "\n[*] Enum asreproast ..." 
 	netexec ldap $ip -u "$username" -p "$password" --asreproast __netexec_asreproast.txt 
@@ -198,6 +198,9 @@ if [[ -n "$password" ]]; then
 	echo -e "\n[*] Logon script on ldap"
 	powerview "$username":"$password"@$ip -q 'Get-DomainObject -Where "scriptPath not null" -Select sAMAccountName,lastLogon,lastLogonTimestamp,logonCount,scriptPath -TableView'
 
+	echo -e "\n[*] Enum GPO ..."
+	powerview "$username":"$password"@$ip -q 'Get-DomainGPO -Properties cn,displayName,whenChanged,whenCreated,versionNumber,gPCFileSysPath,gPCMachineExtensionNames,gPCUserExtensionNames'
+
 	echo -e "\n[*] Who can write SPN ?"
 	powerview "$username":"$password"@$ip -q 'Get-DomainObjectAcl -ResolveGUIDs -Where "ObjectAceType match Service-Principal-Name" -Select ObjectDN,AccessMask,SecurityIdentifier -TableView'
 
@@ -214,15 +217,24 @@ if [[ -n "$password" ]]; then
 	echo -e "\n[*] Who can link GPO for Domain or OU?"
 	powerview "$username":"$password"@"$ip" -q "Get-DomainObjectAcl -ResolveGUIDs -Where 'ObjectAceType match GP-Link' -NoCache -Select ObjectDN,AccessMask,SecurityIdentifier -TableView"
 
-	ehco -e "\n[*] Who can modify GPO for site?"
+	echo -e "\n[*] Who can modify GPO for site?"
 	command_output=$(powerview "$username":"$password"@"$ip" -q 'Get-Domain -Properties subRefs' | grep "CN=Configuration,")
 	echo "$command_output" | while IFS= read -r line; do
 		echo "[SearchBase]: CN=Sites,$line"
 		powerview "$username":"$password"@"$ip" -q "Get-DomainObjectAcl  -SearchBase \"CN=Sites,$line\" -ResolveGUIDs -TableView -Select ObjectDN,ActiveDirectoryRights,SecurityIdentifier"
 	done
 
+	echo -e "\n[*] GPO file group is member of ..."
+	powerview -d "$username":"$password"@"$ip" -q 'Get-DomainGPOLocalGroup'
+
 	echo -e "\n[*] Last Logon user ..."
 	powerview "$username":"$password"@"$ip" -q 'Get-DomainObject -Select sAMAccountName,lastLogon,lastLogonTimestamp,logonCount,scriptPath -Where "lastLogon not null" -TableView'
+
+	echo -e "\n[*] Enum Foreign User..."
+	powerview "$username":"$password"@"$ip" -q 'Find-ForeignUser' --no-cache
+
+	echo -e "\n[*] Enum IP from DNS"
+	powerview "$username":"$password"@"$ip" -q 'Get-DomainDNSRecord -Properties name,Address --TableView'
 
 fi
 
@@ -265,3 +277,6 @@ if [[ -n "$password" ]]; then
 	echo -e "\n[*] keepass discover ..."
 	netexec smb $ip -u "$username" -p "$password" -M keepass_discover
 fi
+
+echo -e "[Note] More Enumration tools: "
+echo -e "1: PowerView.py Find-LocalAdminAccess (need add dns into /etc/resolv.conf) "
