@@ -227,6 +227,9 @@ if [[ -n "$password" ]]; then
 	echo -e "\n[*] GPO file group is member of ..."
 	powerview -d "$username":"$password"@"$ip" -q 'Get-DomainGPOLocalGroup'
 
+	echo -e "\n[*] Get-DomainRBCD"
+	powerview "$username":"$password"@"$ip" -q 'Get-DomainRBCD'
+
 	echo -e "\n[*] Last Logon user ..."
 	powerview "$username":"$password"@"$ip" -q 'Get-DomainObject -Select sAMAccountName,lastLogon,lastLogonTimestamp,logonCount,scriptPath -Where "lastLogon not null" -TableView'
 
