@@ -189,6 +189,8 @@ netexec ldap $ip -u "$username" -p "$password" --dc-list
 echo -e "\n[*] get-network via ldap ..."
 netexec ldap $ip -u "$username" -p "$password" -M get-network -o ALL=true
 
+#echo -e "\n[*] SID history via ldap ..."
+#netexec ldap $ip -u "$username" -p "$password" -M get-network -o ALL=true
 
 if [[ -n "$password" ]]; then
 	echo -e "\n=== Powerview.py ==="

@@ -121,6 +121,18 @@
                     "allowCollapse": true
                 }
             ]
+        },
+        {
+            "name": "List All LAPS Enable Computers",
+            "category": "Tools4mane",
+            "queryList": [
+                {
+                    "final": true,
+                    "query": "MATCH (c:Computer) WHERE c.haslaps = true AND c.enabled = true RETURN c",
+                    "props": {},
+                    "allowCollapse": true
+                }
+            ]
         }
     ]
 }
