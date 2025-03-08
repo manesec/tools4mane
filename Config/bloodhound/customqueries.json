@@ -133,6 +133,18 @@
                     "allowCollapse": true
                 }
             ]
+        },
+        {
+            "name": "List Group bigger than 1000",
+            "category": "Tools4mane",
+            "queryList": [
+                {
+                    "final": true,
+                    "query": "match (g:Group) where toInteger(right(g.objectid, 4)) > 1000 return g",
+                    "props": {},
+                    "allowCollapse": true
+                }
+            ]
         }
     ]
 }
