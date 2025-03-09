@@ -139,6 +139,9 @@ netexec ldap $ip -u "$username" -p "$password" --query "(useraccountcontrol:1.2.
 echo -e '\n[*] Enum user has ENCRYPTED_TEXT_PWD_ALLOWED'
 netexec ldap $ip -u "$username" -p "$password" --query "(useraccountcontrol:1.2.840.113556.1.4.803:=128)" "sAMAccountName"
 
+echo -e '\n[*] Enum foreignSecurityPrincipal for Abusing PAM Trust'
+netexec ldap $ip -u "$username" -p "$password" --query  "(objectClass=foreignSecurityPrincipal)" "memberof distinguishedname"
+
 echo -e '\n[*] Enum adminCount = 1'
 netexec ldap $ip -u "$username" -p "$password" --query "(adminCount=1)" "sAMAccountName"
 # netexec ldap $ip -u "$username" -p "$password" --admin-count
@@ -257,6 +260,9 @@ netexec ldap $ip -u "$username" -p "$password" --query  "(objectClass=group)" "s
 
 echo -e "\n[*] Enum all computers via ldap"
 netexec ldap $ip -u "$username" -p "$password" --query  "(objectCategory=computer)" "sAMAccountName description" 
+
+echo -e "\n[*] Enum all SPN via ldap"
+netexec ldap $ip -u "$username" -p "$password" --query  "(servicePrincipalName=*)" "sAMAccountName servicePrincipalName"
 
 # echo -e "\n[*] Enum user & groups via ldap in netexec way (May have bug for null session)"
 # netexec ldap $ip -u "$username" -p "$password" --users --groups
