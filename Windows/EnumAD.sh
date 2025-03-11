@@ -142,6 +142,9 @@ netexec ldap $ip -u "$username" -p "$password" --query "(useraccountcontrol:1.2.
 echo -e '\n[*] Enum foreignSecurityPrincipal for Abusing PAM Trust'
 netexec ldap $ip -u "$username" -p "$password" --query  "(objectClass=foreignSecurityPrincipal)" "memberof distinguishedname"
 
+echo -e '\n[*] Enum ShadowPrincipalContainer for Abusing PAM Trust'
+netexec ldap $ip -u "$username" -p "$password" --query  "(objectClass=msDS-ShadowPrincipalContainer)" "memberof distinguishedname"
+
 echo -e '\n[*] Enum adminCount = 1'
 netexec ldap $ip -u "$username" -p "$password" --query "(adminCount=1)" "sAMAccountName"
 # netexec ldap $ip -u "$username" -p "$password" --admin-count
