@@ -6,12 +6,12 @@
 $detectMethod = 0;
 
 try {
-	$process = Get-WmiObject Win32_Process;
+	$process = Get-WmiObject Win32_Process -ErrorAction Stop;
 	$detectMethod = 1;
 } catch { "[!] Permission Denied for WMI, Using Get-Process ..." }
 
 try {
-	$process = Get-Process;
+	$process = Get-Process -ErrorAction Stop;
 	$detectMethod = 2;
 } catch { "[!] Permission Denied for Get-Process, Giving up ..." }
 
